@@ -60,6 +60,9 @@ export default function VuelaCRMReplica() {
   const [opportunityStage, setOpportunityStage] = useState("New Lead");
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
+  const [selectedFunnel, setSelectedFunnel] = useState(null);
+  const [selectedWorkflow, setSelectedWorkflow] = useState(null);
+  const [selectedReview, setSelectedReview] = useState(null);
   const activeItem = mainNav.find(([key]) => key === page);
   const title = activeItem?.[1] || "Dashboard";
 
@@ -127,9 +130,9 @@ export default function VuelaCRMReplica() {
           {page === "opportunities" && <Opportunities onSelectOpportunity={(opp) => { setSelectedOpportunity(opp); setOpportunityStage(opp.stage); }} onCreateOpportunity={() => setModal("createOpportunity")} />}
           {page === "calendars" && <Calendars onSelectAppointment={setSelectedAppointment} onCreateAppointment={() => setModal("createAppointment")} />}
           {page === "payments" && <Payments onSelectInvoice={setSelectedInvoice} onCreateInvoice={() => setModal("createInvoice")} />}
-          {page === "sites" && <Sites />}
-          {page === "reputation" && <Reputation />}
-          {page === "automations" && <Automations />}
+          {page === "sites" && <Sites onSelectFunnel={setSelectedFunnel} onCreateFunnel={() => setModal("createFunnel")} />}
+          {page === "reputation" && <Reputation onSelectReview={setSelectedReview} onSendReview={() => setModal("sendReview")} />}
+          {page === "automations" && <Automations onSelectWorkflow={setSelectedWorkflow} onCreateWorkflow={() => setModal("createWorkflow")} />}
           {page === "contacts" && <Contacts />}
           {page === "launchpad" && <Marketing />}          <GlobalModal type={modal} onClose={() => setModal(null)} onGoToMessages={() => { setModal(null); setPage("conversations"); }} />
           <OpportunityDrawer
@@ -145,6 +148,18 @@ export default function VuelaCRMReplica() {
           <InvoiceDrawer
             invoice={selectedInvoice}
             onClose={() => setSelectedInvoice(null)}
+          />
+          <FunnelDrawer
+            funnel={selectedFunnel}
+            onClose={() => setSelectedFunnel(null)}
+          />
+          <WorkflowDrawer
+            workflow={selectedWorkflow}
+            onClose={() => setSelectedWorkflow(null)}
+          />
+          <ReviewDrawer
+            review={selectedReview}
+            onClose={() => setSelectedReview(null)}
           />
           <PhoneDialer
             open={phoneOpen}
@@ -303,13 +318,13 @@ function Calendars({ onSelectAppointment, onCreateAppointment }){
 
 function Payments({ onSelectInvoice, onCreateInvoice }){return <div><PageTabs items={["Invoices & Estimates","Documents & Contracts","Orders"]}/><div className="bg-[#f3f7fb] p-5"><Toolbar title="Invoices" button="New" onButtonClick={onCreateInvoice}/><div className="grid gap-4 md:grid-cols-4">{["0 In Draft $0.00","5 In Due $8,450.00","3 Received $6,200.00","1 Overdue $1,250.00"].map(x=><button key={x} onClick={() => alert(`${x} filtered in demo mode`)} className="rounded-lg border bg-white p-4 text-left font-bold transition hover:border-[#007e6f] hover:bg-[#f0faf8]">{x}</button>)}</div><Table onSelectInvoice={onSelectInvoice} /></div></div>}
 
-function Sites(){return <div><PageTabs items={["Funnels","Websites","Stores","Analytics","Blogs","Client Portal","Forms"]}/><div className="bg-[#f3f7fb] p-5"><Toolbar title="Funnels" button="New Funnel"/><SimpleList items={["Roofing Lead Capture Funnel","Free Roof Inspection Funnel","Storm Damage Funnel","Estimate Request Funnel","Financing Application Funnel"]}/></div></div>}
-function Reputation(){return <div><PageTabs items={["Overview","My Stats","Competitor Analysis"]}/><div className="grid gap-4 bg-[#f3f7fb] p-5 xl:grid-cols-[280px_1fr_280px]"><Panel title="Your Rating"><div className="text-5xl font-bold">4.8</div><div className="mt-3 text-yellow-400 text-xl">★★★★★</div><p className="mt-3 text-sm text-slate-500">Based on 126 reviews</p></Panel><Panel title="Reviews and ratings trend"><div className="mt-5 h-64 rounded-lg bg-gradient-to-t from-[#007e6f]/10 to-transparent"><div className="pt-32 text-center font-bold text-[#007e6f]">Reviews Trend Chart</div></div></Panel><Panel title="Review Summary"><p className="text-4xl font-bold">128</p><p className="text-sm text-slate-500">Total Reviews</p><p className="mt-8 text-4xl font-bold">12</p><p className="text-sm text-slate-500">New Reviews</p><button className="mt-8 rounded-md bg-[#007e6f] px-4 py-2 text-white">Send Review Request</button></Panel></div></div>}
-function Automations(){return <div><PageTabs items={["Workflows","Overview","Global Workflow Settings"]}/><div className="bg-[#f3f7fb] p-5"><Toolbar title="Workflow List" button="Create Workflow"/><SimpleList items={["New Lead Follow Up","Appointment Reminder","Review Request","Re-Engagement Campaign","Invoice Follow Up"]}/></div></div>}
+function Sites({ onSelectFunnel, onCreateFunnel }){return <div><PageTabs items={["Funnels","Websites","Stores","Analytics","Blogs","Client Portal","Forms"]}/><div className="bg-[#f3f7fb] p-5"><Toolbar title="Funnels" button="New Funnel" onButtonClick={onCreateFunnel}/><SimpleList items={["Website Lead Capture Funnel","Free Consultation Funnel","Service Quote Funnel","Estimate Request Funnel","CRM Demo Funnel"]} onRowClick={(name) => onSelectFunnel({ name, visits: 1240, leads: 86, conversion: '6.9%', status: 'Active' })}/></div></div>}
+function Reputation({ onSelectReview, onSendReview }){const reviews=[{name:'Avery Mitchell',rating:5,text:'Fast response and very easy to schedule.'},{name:'Sofia Rivera',rating:5,text:'The follow up was clear and professional.'},{name:'James Carter',rating:4,text:'Helpful team and simple process.'}];return <div><PageTabs items={["Overview","My Stats","Competitor Analysis"]}/><div className="grid gap-4 bg-[#f3f7fb] p-5 xl:grid-cols-[280px_1fr_280px]"><Panel title="Your Rating"><div className="text-5xl font-bold">4.8</div><div className="mt-3 text-yellow-400 text-xl">★★★★★</div><p className="mt-3 text-sm text-slate-500">Based on 126 reviews</p></Panel><Panel title="Recent Reviews"><div className="mt-4 space-y-3">{reviews.map((review)=><button key={review.name} onClick={() => onSelectReview(review)} className="block w-full rounded-xl border border-slate-200 bg-white p-4 text-left transition hover:border-[#007e6f] hover:bg-[#f0faf8]"><div className="text-yellow-400">{'★'.repeat(review.rating)}</div><p className="mt-2 text-sm text-slate-600">{review.text}</p><p className="mt-3 font-bold">{review.name}</p></button>)}</div></Panel><Panel title="Review Summary"><p className="text-4xl font-bold">128</p><p className="text-sm text-slate-500">Total Reviews</p><p className="mt-8 text-4xl font-bold">12</p><p className="text-sm text-slate-500">New Reviews</p><button onClick={onSendReview} className="mt-8 rounded-md bg-[#007e6f] px-4 py-2 text-white">Send Review Request</button></Panel></div></div>}
+function Automations({ onSelectWorkflow, onCreateWorkflow }){return <div><PageTabs items={["Workflows","Overview","Global Workflow Settings"]}/><div className="bg-[#f3f7fb] p-5"><Toolbar title="Workflow List" button="Create Workflow" onButtonClick={onCreateWorkflow}/><SimpleList items={["New Lead Follow Up","Appointment Reminder","Review Request","Re-Engagement Campaign","Invoice Follow Up"]} onRowClick={(name) => onSelectWorkflow({ name, status:'Published', steps: name === 'New Lead Follow Up' ? 5 : 3, trigger: name.includes('Invoice') ? 'Invoice Due' : 'Contact Created' })}/></div></div>}
 function Contacts(){return <div><PageTabs items={["Smart Lists","Contacts","Bulk Actions"]}/><div className="bg-[#f3f7fb] p-5"><Toolbar title="Contacts" button="Add Contact"/><SimpleList items={["Sarah Johnson","Mike Thompson","Emily Davis","Jason Brown","Lisa Martinez"]}/></div></div>}
 
 function Toolbar({title,button,onButtonClick}){return <div className="mb-5 flex items-center justify-between"><div><h2 className="text-3xl font-semibold">{title}</h2><p className="text-slate-500">Manage your sample CRM data and activity.</p></div><div className="flex gap-3"><ButtonGhost><Filter className="h-4 w-4"/> Advanced Filters</ButtonGhost><button onClick={onButtonClick || (() => alert(`${button} opened in demo mode`))} className="rounded-md bg-[#007e6f] px-4 py-2 font-semibold text-white"><Plus className="mr-1 inline h-4 w-4"/>{button}</button></div></div>}
-function SimpleList({items}){return <div className="rounded-lg border bg-white"><div className="grid grid-cols-[1fr_180px_40px] border-b bg-slate-50 p-3 text-sm font-semibold text-slate-500"><span>Name</span><span>Last Updated</span><span></span></div>{items.map((x,i)=><div key={x} className="grid grid-cols-[1fr_180px_40px] border-b p-4"><span className="font-semibold">{x}</span><span className="text-sm text-slate-500">Apr {29-i}, 2026</span><MoreVertical className="h-4 w-4"/></div>)}</div>}
+function SimpleList({items,onRowClick}){return <div className="rounded-lg border bg-white"><div className="grid grid-cols-[1fr_180px_40px] border-b bg-slate-50 p-3 text-sm font-semibold text-slate-500"><span>Name</span><span>Last Updated</span><span></span></div>{items.map((x,i)=><button key={x} onClick={() => onRowClick ? onRowClick(x) : alert(`${x} opened in demo mode`)} className="grid w-full grid-cols-[1fr_180px_40px] border-b p-4 text-left transition hover:bg-[#f0faf8]"><span className="font-semibold">{x}</span><span className="text-sm text-slate-500">Apr {29-i}, 2026</span><MoreVertical className="h-4 w-4"/></button>)}</div>}
 function Table({ onSelectInvoice } = {}){return <div className="mt-5 rounded-lg border bg-white"><div className="grid grid-cols-6 border-b bg-slate-50 p-3 text-xs font-bold text-slate-500"><span>Invoice Name</span><span>Invoice #</span><span>Customer</span><span>Issue Date</span><span>Amount</span><span>Status</span></div>{["Robert Lee","Sarah Johnson","Brian Anderson","Emily Davis","John Miller"].map((n,i)=><button key={n} onClick={() => onSelectInvoice && onSelectInvoice({ invoice:`INV-100${i+1}`, number:`100${i+1}`, customer:n, date:`Apr ${28-i}, 2026`, amount:[2800,1950,2400,1250,1800][i], status:i===3?'Overdue':'Received' })} className="grid w-full grid-cols-6 border-b p-3 text-left text-sm transition hover:bg-[#f0faf8]"><span>INV-100{i+1}</span><span>100{i+1}</span><span>{n}</span><span>Apr {28-i}, 2026</span><span>${[2800,1950,2400,1250,1800][i]}</span><span className="font-bold text-[#007e6f]">{i===3?'Overdue':'Received'}</span></button>)}</div>}
 function MiniMarketing(){return <div className="rounded-lg border bg-white p-4"><h3 className="font-bold">Marketing</h3><div className="mt-4 grid grid-cols-2 gap-3">{["Bulk Scheduling","Evergreen Queue","Recurring Post","RSS Feed"].map(x=><SmallCard key={x} title={x} link="Create" />)}</div></div>}
 function MiniCalendar(){return <div className="rounded-lg border bg-white p-4"><h3 className="font-bold">Calendar View</h3><CalendarGrid mini /></div>}
@@ -408,6 +423,40 @@ function GlobalModal({ type, callLog = [], onClose, onGoToMessages }) {
           <input className="w-full rounded-xl border border-slate-300 p-3 outline-none" placeholder="Amount" />
           <select className="w-full rounded-xl border border-slate-300 p-3 outline-none"><option>Draft</option><option>Due</option><option>Paid</option></select>
           <button onClick={() => alert('Invoice created in demo mode')} className="w-full rounded-xl bg-[#007e6f] px-4 py-3 font-bold text-white">Create Demo Invoice</button>
+        </div>
+      ),
+    },
+    createFunnel: {
+      title: "Create Funnel",
+      subtitle: "Build a sample funnel in demo mode.",
+      body: (
+        <div className="space-y-3">
+          <input className="w-full rounded-xl border border-slate-300 p-3 outline-none" placeholder="Funnel name" />
+          <select className="w-full rounded-xl border border-slate-300 p-3 outline-none"><option>Lead Capture</option><option>Booking Funnel</option><option>Quote Request</option></select>
+          <button onClick={() => alert('Funnel created in demo mode')} className="w-full rounded-xl bg-[#007e6f] px-4 py-3 font-bold text-white">Create Demo Funnel</button>
+        </div>
+      ),
+    },
+    sendReview: {
+      title: "Send Review Request",
+      subtitle: "Send a sample review request to a customer.",
+      body: (
+        <div className="space-y-3">
+          <input className="w-full rounded-xl border border-slate-300 p-3 outline-none" placeholder="Customer name" />
+          <input className="w-full rounded-xl border border-slate-300 p-3 outline-none" placeholder="Phone or email" />
+          <textarea className="h-24 w-full rounded-xl border border-slate-300 p-3 outline-none" defaultValue="Thank you for choosing us. Would you mind sharing your experience?" />
+          <button onClick={() => alert('Review request sent in demo mode')} className="w-full rounded-xl bg-[#007e6f] px-4 py-3 font-bold text-white">Send Demo Request</button>
+        </div>
+      ),
+    },
+    createWorkflow: {
+      title: "Create Workflow",
+      subtitle: "Start a sample automation in demo mode.",
+      body: (
+        <div className="space-y-3">
+          <input className="w-full rounded-xl border border-slate-300 p-3 outline-none" placeholder="Workflow name" />
+          <select className="w-full rounded-xl border border-slate-300 p-3 outline-none"><option>Contact Created</option><option>Form Submitted</option><option>Missed Call</option><option>Invoice Due</option></select>
+          <button onClick={() => alert('Workflow created in demo mode')} className="w-full rounded-xl bg-[#007e6f] px-4 py-3 font-bold text-white">Create Demo Workflow</button>
         </div>
       ),
     },
@@ -539,6 +588,88 @@ function InvoiceDrawer({ invoice, onClose }) {
           <button onClick={() => alert('Payment reminder sent in demo mode')} className="rounded-xl border border-slate-200 p-3 text-sm font-bold hover:bg-[#f0faf8]">Send Reminder</button>
           <button onClick={() => alert('Invoice downloaded in demo mode')} className="rounded-xl border border-slate-200 p-3 text-sm font-bold hover:bg-[#f0faf8]">Download</button>
           <button onClick={() => alert('Invoice email opened in demo mode')} className="rounded-xl border border-slate-200 p-3 text-sm font-bold hover:bg-[#f0faf8]">Email Invoice</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FunnelDrawer({ funnel, onClose }) {
+  if (!funnel) return null;
+  return (
+    <div className="fixed inset-y-0 right-0 z-50 w-full max-w-md border-l border-slate-200 bg-white shadow-2xl">
+      <div className="flex items-start justify-between border-b border-slate-200 p-5">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-wide text-[#007e6f]">Funnel Preview</p>
+          <h3 className="mt-1 text-2xl font-bold">{funnel.name}</h3>
+          <p className="text-sm text-slate-500">{funnel.status} · {funnel.conversion} conversion</p>
+        </div>
+        <button onClick={onClose} className="rounded-full bg-slate-100 px-3 py-1 text-sm font-bold">Close</button>
+      </div>
+      <div className="space-y-5 p-5">
+        <div className="grid grid-cols-3 gap-3">
+          <div className="rounded-xl border p-3"><p className="text-xs text-slate-500">Visits</p><p className="text-xl font-bold">{funnel.visits}</p></div>
+          <div className="rounded-xl border p-3"><p className="text-xs text-slate-500">Leads</p><p className="text-xl font-bold">{funnel.leads}</p></div>
+          <div className="rounded-xl border p-3"><p className="text-xs text-slate-500">Rate</p><p className="text-xl font-bold">{funnel.conversion}</p></div>
+        </div>
+        <div className="rounded-xl bg-[#f0faf8] p-4 text-sm text-slate-700">This sample funnel captures traffic, collects lead details, and sends follow up automatically.</div>
+        <div className="grid grid-cols-2 gap-2">
+          <button onClick={() => alert('Funnel preview opened in demo mode')} className="rounded-xl border p-3 text-sm font-bold hover:bg-[#f0faf8]">Preview</button>
+          <button onClick={() => alert('Funnel analytics opened in demo mode')} className="rounded-xl border p-3 text-sm font-bold hover:bg-[#f0faf8]">Analytics</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function WorkflowDrawer({ workflow, onClose }) {
+  if (!workflow) return null;
+  return (
+    <div className="fixed inset-y-0 right-0 z-50 w-full max-w-md border-l border-slate-200 bg-white shadow-2xl">
+      <div className="flex items-start justify-between border-b border-slate-200 p-5">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-wide text-[#007e6f]">Automation Preview</p>
+          <h3 className="mt-1 text-2xl font-bold">{workflow.name}</h3>
+          <p className="text-sm text-slate-500">{workflow.status} · {workflow.steps} steps</p>
+        </div>
+        <button onClick={onClose} className="rounded-full bg-slate-100 px-3 py-1 text-sm font-bold">Close</button>
+      </div>
+      <div className="space-y-4 p-5">
+        {[
+          `Trigger: ${workflow.trigger}`,
+          'Wait 2 minutes',
+          'Send SMS follow up',
+          'Create task if no response',
+          'Notify team member'
+        ].slice(0, workflow.steps).map((step, index) => (
+          <div key={step} className="flex items-center gap-3 rounded-xl border border-slate-200 p-3">
+            <div className="grid h-8 w-8 place-items-center rounded-full bg-[#007e6f] text-sm font-bold text-white">{index+1}</div>
+            <p className="text-sm font-semibold">{step}</p>
+          </div>
+        ))}
+        <button onClick={() => alert('Workflow test started in demo mode')} className="w-full rounded-xl bg-[#007e6f] px-4 py-3 font-bold text-white">Run Demo Test</button>
+      </div>
+    </div>
+  );
+}
+
+function ReviewDrawer({ review, onClose }) {
+  if (!review) return null;
+  return (
+    <div className="fixed inset-y-0 right-0 z-50 w-full max-w-md border-l border-slate-200 bg-white shadow-2xl">
+      <div className="flex items-start justify-between border-b border-slate-200 p-5">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-wide text-[#007e6f]">Review Detail</p>
+          <h3 className="mt-1 text-2xl font-bold">{review.name}</h3>
+          <p className="text-yellow-400">{'★'.repeat(review.rating)}</p>
+        </div>
+        <button onClick={onClose} className="rounded-full bg-slate-100 px-3 py-1 text-sm font-bold">Close</button>
+      </div>
+      <div className="space-y-5 p-5">
+        <div className="rounded-xl border border-slate-200 p-4 text-sm text-slate-700">{review.text}</div>
+        <div className="grid grid-cols-2 gap-2">
+          <button onClick={() => alert('Review reply opened in demo mode')} className="rounded-xl border p-3 text-sm font-bold hover:bg-[#f0faf8]">Reply</button>
+          <button onClick={() => alert('Review shared in demo mode')} className="rounded-xl border p-3 text-sm font-bold hover:bg-[#f0faf8]">Share</button>
         </div>
       </div>
     </div>
