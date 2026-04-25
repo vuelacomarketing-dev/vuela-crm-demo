@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
+import React, { useEffect, useState } from "react";
 import {
   Rocket,
   LayoutDashboard,
@@ -58,6 +59,8 @@ export default function VuelaCRMReplica() {
   const [modal, setModal] = useState(null);
   const [selectedOpportunity, setSelectedOpportunity] = useState(null);
   const [opportunityStage, setOpportunityStage] = useState("New Lead");
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [selectedInvoice, setSelectedInvoice] = useState(null);
   const activeItem = mainNav.find(([key]) => key === page);
   const title = activeItem?.[1] || "Dashboard";
 
@@ -119,8 +122,8 @@ export default function VuelaCRMReplica() {
           {page === "dashboard" && <Dashboard />}
           {page === "conversations" && <Conversations />}
           {page === "opportunities" && <Opportunities onSelectOpportunity={(opp) => { setSelectedOpportunity(opp); setOpportunityStage(opp.stage); }} onCreateOpportunity={() => setModal("createOpportunity")} />}
-          {page === "calendars" && <Calendars />}
-          {page === "payments" && <Payments />}
+          {page === "calendars" && <Calendars onSelectAppointment={setSelectedAppointment} onCreateAppointment={() => setModal("createAppointment")} />}
+          {page === "payments" && <Payments onSelectInvoice={setSelectedInvoice} onCreateInvoice={() => setModal("createInvoice")} />}
           {page === "sites" && <Sites />}
           {page === "reputation" && <Reputation />}
           {page === "automations" && <Automations />}
@@ -131,6 +134,14 @@ export default function VuelaCRMReplica() {
             stage={opportunityStage}
             onStageChange={setOpportunityStage}
             onClose={() => setSelectedOpportunity(null)}
+          />
+          <AppointmentDrawer
+            appointment={selectedAppointment}
+            onClose={() => setSelectedAppointment(null)}
+          />
+          <InvoiceDrawer
+            invoice={selectedInvoice}
+            onClose={() => setSelectedInvoice(null)}
           />
           <PhoneDialer
             open={phoneOpen}
@@ -283,8 +294,12 @@ function Opportunities({ onSelectOpportunity, onCreateOpportunity }){
   return <div><PageTabs items={["Opportunities","Pipelines","Bulk Actions"]}/><div className="bg-[#f3f7fb] p-5"><Toolbar title="Marketing Pipeline" button="Add opportunity" onButtonClick={onCreateOpportunity}/><div className="mt-5 grid gap-3 xl:grid-cols-5">{cols.map((c,i)=><div key={c} className="rounded-lg border bg-white"><div className="border-b p-3"><p className="font-bold">{c}</p><p className="text-sm text-slate-500">{12-i*2} Opportunities · ${(6500+i*2400).toLocaleString()}</p></div><div className="space-y-2 p-3">{cards[c].map((n,j)=><button key={n+j} onClick={() => onSelectOpportunity({ name:n, stage:c, value:[650,1000,950][j] || 1200, service:j===2?'CRM Setup':'Website Lead', phone:`+1 (503) 555-01${i}${j}`, email:n.toLowerCase().replaceAll(' ','.')+'@example.com' })} className="block w-full rounded-lg border border-slate-200 bg-white p-3 text-left transition hover:border-[#007e6f] hover:bg-[#f0faf8]"><div className="flex justify-between"><p className="font-bold text-sm">{n}</p><p className="font-bold text-sm">${[650,1000,950][j]}</p></div><p className="mt-2 text-xs text-slate-500">{j===2?'CRM Setup':'Website Lead'}</p><p className="mt-2 text-xs text-slate-400">Apr {29-j}</p></button>)}</div></div>)}</div></div></div>
 }
 
-function Calendars(){return <div><PageTabs items={["Calendar View","Appointment List View","Calendar Settings"]}/><div className="grid grid-cols-[1fr_320px] bg-[#f3f7fb]"><div className="p-5"><Toolbar title="May 2026" button="New"/><CalendarGrid /></div><div className="border-l bg-white p-5"><h3 className="font-bold">Manage View</h3><div className="mt-6 rounded-lg bg-slate-50 p-4"><p className="font-bold">View by type</p>{["All","Appointments","Blocked Slots"].map((x,i)=><p key={x} className="mt-3 text-sm">○ {x}</p>)}</div><div className="mt-6"><p className="font-bold">Filters</p><div className="mt-3 rounded-md border p-2 text-sm text-slate-400">Search users, calendars or groups</div></div></div></div></div>}
-function Payments(){return <div><PageTabs items={["Invoices & Estimates","Documents & Contracts","Orders"]}/><div className="bg-[#f3f7fb] p-5"><Toolbar title="Invoices" button="New"/><div className="grid gap-4 md:grid-cols-4">{["0 In Draft $0.00","5 In Due $8,450.00","3 Received $6,200.00","1 Overdue $1,250.00"].map(x=><div key={x} className="rounded-lg border bg-white p-4 font-bold">{x}</div>)}</div><Table /></div></div>}
+function Calendars({ onSelectAppointment, onCreateAppointment }){
+  return <div><PageTabs items={["Calendar View","Appointment List View","Calendar Settings"]}/><div className="grid grid-cols-[1fr_320px] bg-[#f3f7fb]"><div className="p-5"><Toolbar title="May 2026" button="New" onButtonClick={onCreateAppointment}/><CalendarGrid onSelectAppointment={onSelectAppointment} /></div><div className="border-l bg-white p-5"><h3 className="font-bold">Manage View</h3><div className="mt-6 rounded-lg bg-slate-50 p-4"><p className="font-bold">View by type</p>{["All","Appointments","Blocked Slots"].map((x)=><button key={x} onClick={() => alert(`${x} calendar view selected in demo mode`)} className="mt-3 block text-sm hover:text-[#007e6f]">○ {x}</button>)}</div><div className="mt-6"><p className="font-bold">Filters</p><button onClick={() => alert('Calendar filter opened in demo mode')} className="mt-3 w-full rounded-md border p-2 text-left text-sm text-slate-400">Search users, calendars or groups</button></div></div></div></div>
+}
+
+function Payments({ onSelectInvoice, onCreateInvoice }){return <div><PageTabs items={["Invoices & Estimates","Documents & Contracts","Orders"]}/><div className="bg-[#f3f7fb] p-5"><Toolbar title="Invoices" button="New" onButtonClick={onCreateInvoice}/><div className="grid gap-4 md:grid-cols-4">{["0 In Draft $0.00","5 In Due $8,450.00","3 Received $6,200.00","1 Overdue $1,250.00"].map(x=><button key={x} onClick={() => alert(`${x} filtered in demo mode`)} className="rounded-lg border bg-white p-4 text-left font-bold transition hover:border-[#007e6f] hover:bg-[#f0faf8]">{x}</button>)}</div><Table onSelectInvoice={onSelectInvoice} /></div></div>}
+
 function Sites(){return <div><PageTabs items={["Funnels","Websites","Stores","Analytics","Blogs","Client Portal","Forms"]}/><div className="bg-[#f3f7fb] p-5"><Toolbar title="Funnels" button="New Funnel"/><SimpleList items={["Roofing Lead Capture Funnel","Free Roof Inspection Funnel","Storm Damage Funnel","Estimate Request Funnel","Financing Application Funnel"]}/></div></div>}
 function Reputation(){return <div><PageTabs items={["Overview","My Stats","Competitor Analysis"]}/><div className="grid gap-4 bg-[#f3f7fb] p-5 xl:grid-cols-[280px_1fr_280px]"><Panel title="Your Rating"><div className="text-5xl font-bold">4.8</div><div className="mt-3 text-yellow-400 text-xl">★★★★★</div><p className="mt-3 text-sm text-slate-500">Based on 126 reviews</p></Panel><Panel title="Reviews and ratings trend"><div className="mt-5 h-64 rounded-lg bg-gradient-to-t from-[#007e6f]/10 to-transparent"><div className="pt-32 text-center font-bold text-[#007e6f]">Reviews Trend Chart</div></div></Panel><Panel title="Review Summary"><p className="text-4xl font-bold">128</p><p className="text-sm text-slate-500">Total Reviews</p><p className="mt-8 text-4xl font-bold">12</p><p className="text-sm text-slate-500">New Reviews</p><button className="mt-8 rounded-md bg-[#007e6f] px-4 py-2 text-white">Send Review Request</button></Panel></div></div>}
 function Automations(){return <div><PageTabs items={["Workflows","Overview","Global Workflow Settings"]}/><div className="bg-[#f3f7fb] p-5"><Toolbar title="Workflow List" button="Create Workflow"/><SimpleList items={["New Lead Follow Up","Appointment Reminder","Review Request","Re-Engagement Campaign","Invoice Follow Up"]}/></div></div>}
@@ -292,11 +307,11 @@ function Contacts(){return <div><PageTabs items={["Smart Lists","Contacts","Bulk
 
 function Toolbar({title,button,onButtonClick}){return <div className="mb-5 flex items-center justify-between"><div><h2 className="text-3xl font-semibold">{title}</h2><p className="text-slate-500">Manage your sample CRM data and activity.</p></div><div className="flex gap-3"><ButtonGhost><Filter className="h-4 w-4"/> Advanced Filters</ButtonGhost><button onClick={onButtonClick || (() => alert(`${button} opened in demo mode`))} className="rounded-md bg-[#007e6f] px-4 py-2 font-semibold text-white"><Plus className="mr-1 inline h-4 w-4"/>{button}</button></div></div>}
 function SimpleList({items}){return <div className="rounded-lg border bg-white"><div className="grid grid-cols-[1fr_180px_40px] border-b bg-slate-50 p-3 text-sm font-semibold text-slate-500"><span>Name</span><span>Last Updated</span><span></span></div>{items.map((x,i)=><div key={x} className="grid grid-cols-[1fr_180px_40px] border-b p-4"><span className="font-semibold">{x}</span><span className="text-sm text-slate-500">Apr {29-i}, 2026</span><MoreVertical className="h-4 w-4"/></div>)}</div>}
-function Table(){return <div className="mt-5 rounded-lg border bg-white"><div className="grid grid-cols-6 border-b bg-slate-50 p-3 text-xs font-bold text-slate-500"><span>Invoice Name</span><span>Invoice #</span><span>Customer</span><span>Issue Date</span><span>Amount</span><span>Status</span></div>{["Robert Lee","Sarah Johnson","Brian Anderson","Emily Davis","John Miller"].map((n,i)=><div key={n} className="grid grid-cols-6 border-b p-3 text-sm"><span>INV-100{i+1}</span><span>100{i+1}</span><span>{n}</span><span>Apr {28-i}, 2026</span><span>${[2800,1950,2400,1250,1800][i]}</span><span className="font-bold text-[#007e6f]">{i===3?'Overdue':'Received'}</span></div>)}</div>}
+function Table({ onSelectInvoice } = {}){return <div className="mt-5 rounded-lg border bg-white"><div className="grid grid-cols-6 border-b bg-slate-50 p-3 text-xs font-bold text-slate-500"><span>Invoice Name</span><span>Invoice #</span><span>Customer</span><span>Issue Date</span><span>Amount</span><span>Status</span></div>{["Robert Lee","Sarah Johnson","Brian Anderson","Emily Davis","John Miller"].map((n,i)=><button key={n} onClick={() => onSelectInvoice && onSelectInvoice({ invoice:`INV-100${i+1}`, number:`100${i+1}`, customer:n, date:`Apr ${28-i}, 2026`, amount:[2800,1950,2400,1250,1800][i], status:i===3?'Overdue':'Received' })} className="grid w-full grid-cols-6 border-b p-3 text-left text-sm transition hover:bg-[#f0faf8]"><span>INV-100{i+1}</span><span>100{i+1}</span><span>{n}</span><span>Apr {28-i}, 2026</span><span>${[2800,1950,2400,1250,1800][i]}</span><span className="font-bold text-[#007e6f]">{i===3?'Overdue':'Received'}</span></button>)}</div>}
 function MiniMarketing(){return <div className="rounded-lg border bg-white p-4"><h3 className="font-bold">Marketing</h3><div className="mt-4 grid grid-cols-2 gap-3">{["Bulk Scheduling","Evergreen Queue","Recurring Post","RSS Feed"].map(x=><SmallCard key={x} title={x} link="Create" />)}</div></div>}
 function MiniCalendar(){return <div className="rounded-lg border bg-white p-4"><h3 className="font-bold">Calendar View</h3><CalendarGrid mini /></div>}
 function MiniInvoices(){return <div className="rounded-lg border bg-white p-4"><h3 className="font-bold">Invoices & Estimates</h3><Table /></div>}
-function CalendarGrid({mini=false}){const cells=Array.from({length:35});return <div className={`mt-4 grid grid-cols-7 ${mini?'text-[10px]':'text-xs'}`}>{cells.map((_,i)=><div key={i} className={`${mini?'min-h-12':'min-h-24'} border border-slate-200 bg-white p-1`}>{i+1}{[4,8,12,18,22].includes(i)&&<div className="mt-1 rounded bg-[#007e6f]/10 p-1 text-[#007e6f]">10:00 AM</div>}</div>)}</div>}
+function CalendarGrid({mini=false,onSelectAppointment}){const events={4:'Discovery Call',8:'Quote Review',12:'Client Onboarding',18:'Follow Up Call',22:'CRM Training'};const cells=Array.from({length:35});return <div className={`mt-4 grid grid-cols-7 ${mini?'text-[10px]':'text-xs'}`}>{cells.map((_,i)=><button key={i} onClick={() => events[i] && onSelectAppointment && onSelectAppointment({ title:events[i], date:`May ${i+1}, 2026`, time:i%2===0?'10:00 AM':'2:30 PM', contact:['Sarah Johnson','Mike Thompson','Emily Davis','Jason Brown','Lisa Martinez'][i%5], type:i===22?'CRM Training':'Appointment' })} className={`${mini?'min-h-12':'min-h-24'} border border-slate-200 bg-white p-1 text-left transition hover:bg-[#f0faf8]`}>{i+1}{events[i]&&<div className="mt-1 rounded bg-[#007e6f]/10 p-1 text-[#007e6f]">{mini?'10:00 AM':events[i]}</div>}</button>)}</div>}
 function Metric({title,value,up}){return <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm"><p className="text-sm font-medium text-slate-600">{title}</p><p className="mt-3 text-3xl font-semibold">{value}</p><p className="mt-3 text-sm font-semibold text-[#007e6f]">▲ {up} vs last 30 days</p></div>}
 function Panel({title,action,children}){return <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm"><div className="flex items-center justify-between"><h3 className="font-bold">{title}</h3>{action&&<button className="rounded-md border px-3 py-2 text-sm text-slate-600">{action} <ChevronDown className="inline h-3 w-3"/></button>}</div>{children}</div>}
 function SmallCard({title,link}){return <div className="rounded-lg border border-slate-200 bg-white p-4"><p className="min-h-10 font-bold">{title}</p><p className="mt-5 text-sm font-semibold text-blue-600">{link}</p></div>}
@@ -369,6 +384,30 @@ function GlobalModal({ type, callLog = [], onClose, onGoToMessages }) {
         </div>
       ),
     },
+    createAppointment: {
+      title: "Create Appointment",
+      subtitle: "Schedule a sample appointment in demo mode.",
+      body: (
+        <div className="space-y-3">
+          <input className="w-full rounded-xl border border-slate-300 p-3 outline-none" placeholder="Appointment title" />
+          <input className="w-full rounded-xl border border-slate-300 p-3 outline-none" placeholder="Contact name" />
+          <input className="w-full rounded-xl border border-slate-300 p-3 outline-none" placeholder="Date and time" />
+          <button onClick={() => alert('Appointment created in demo mode')} className="w-full rounded-xl bg-[#007e6f] px-4 py-3 font-bold text-white">Create Demo Appointment</button>
+        </div>
+      ),
+    },
+    createInvoice: {
+      title: "Create Invoice",
+      subtitle: "Create a sample invoice in demo mode.",
+      body: (
+        <div className="space-y-3">
+          <input className="w-full rounded-xl border border-slate-300 p-3 outline-none" placeholder="Customer name" />
+          <input className="w-full rounded-xl border border-slate-300 p-3 outline-none" placeholder="Amount" />
+          <select className="w-full rounded-xl border border-slate-300 p-3 outline-none"><option>Draft</option><option>Due</option><option>Paid</option></select>
+          <button onClick={() => alert('Invoice created in demo mode')} className="w-full rounded-xl bg-[#007e6f] px-4 py-3 font-bold text-white">Create Demo Invoice</button>
+        </div>
+      ),
+    },
     missedCall: {
       title: "Missed Call",
       subtitle: "Demo missed call and text-back workflow.",
@@ -438,6 +477,65 @@ function OpportunityDrawer({ opportunity, stage, onStageChange, onClose }) {
         </div>
         <div className="rounded-xl bg-[#f0faf8] p-4 text-sm text-slate-700">
           Current demo stage: <b>{stage}</b>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AppointmentDrawer({ appointment, onClose }) {
+  if (!appointment) return null;
+  return (
+    <div className="fixed inset-y-0 right-0 z-50 w-full max-w-md border-l border-slate-200 bg-white shadow-2xl">
+      <div className="flex items-start justify-between border-b border-slate-200 p-5">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-wide text-[#007e6f]">Appointment Detail</p>
+          <h3 className="mt-1 text-2xl font-bold">{appointment.title}</h3>
+          <p className="text-sm text-slate-500">{appointment.date} · {appointment.time}</p>
+        </div>
+        <button onClick={onClose} className="rounded-full bg-slate-100 px-3 py-1 text-sm font-bold">Close</button>
+      </div>
+      <div className="space-y-5 p-5">
+        <div className="rounded-xl border border-slate-200 p-4">
+          <p className="text-sm font-bold">Contact</p>
+          <p className="mt-2 text-sm text-slate-600">{appointment.contact}</p>
+          <p className="text-sm text-slate-600">{appointment.type}</p>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <button onClick={() => alert('Appointment rescheduled in demo mode')} className="rounded-xl border border-slate-200 p-3 text-sm font-bold hover:bg-[#f0faf8]">Reschedule</button>
+          <button onClick={() => alert('Appointment marked complete in demo mode')} className="rounded-xl border border-slate-200 p-3 text-sm font-bold hover:bg-[#f0faf8]">Mark Complete</button>
+          <button onClick={() => alert('Reminder sent in demo mode')} className="rounded-xl border border-slate-200 p-3 text-sm font-bold hover:bg-[#f0faf8]">Send Reminder</button>
+          <button onClick={() => alert('Notes opened in demo mode')} className="rounded-xl border border-slate-200 p-3 text-sm font-bold hover:bg-[#f0faf8]">Add Notes</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function InvoiceDrawer({ invoice, onClose }) {
+  if (!invoice) return null;
+  return (
+    <div className="fixed inset-y-0 right-0 z-50 w-full max-w-md border-l border-slate-200 bg-white shadow-2xl">
+      <div className="flex items-start justify-between border-b border-slate-200 p-5">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-wide text-[#007e6f]">Invoice Detail</p>
+          <h3 className="mt-1 text-2xl font-bold">{invoice.invoice}</h3>
+          <p className="text-sm text-slate-500">{invoice.customer} · ${invoice.amount}</p>
+        </div>
+        <button onClick={onClose} className="rounded-full bg-slate-100 px-3 py-1 text-sm font-bold">Close</button>
+      </div>
+      <div className="space-y-5 p-5">
+        <div className="rounded-xl border border-slate-200 p-4">
+          <p className="text-sm font-bold">Invoice Info</p>
+          <p className="mt-2 text-sm text-slate-600">Invoice Number: {invoice.number}</p>
+          <p className="text-sm text-slate-600">Issue Date: {invoice.date}</p>
+          <p className="text-sm text-slate-600">Status: {invoice.status}</p>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <button onClick={() => alert('Invoice marked paid in demo mode')} className="rounded-xl border border-slate-200 p-3 text-sm font-bold hover:bg-[#f0faf8]">Mark Paid</button>
+          <button onClick={() => alert('Payment reminder sent in demo mode')} className="rounded-xl border border-slate-200 p-3 text-sm font-bold hover:bg-[#f0faf8]">Send Reminder</button>
+          <button onClick={() => alert('Invoice downloaded in demo mode')} className="rounded-xl border border-slate-200 p-3 text-sm font-bold hover:bg-[#f0faf8]">Download</button>
+          <button onClick={() => alert('Invoice email opened in demo mode')} className="rounded-xl border border-slate-200 p-3 text-sm font-bold hover:bg-[#f0faf8]">Email Invoice</button>
         </div>
       </div>
     </div>
