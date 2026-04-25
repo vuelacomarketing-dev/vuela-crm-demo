@@ -1,6 +1,4 @@
-import React, { useState } from "react";
-import ReactDOM from "react-dom/client";
-import "./index.css";
+import React, { useEffect, useState } from "react";
 import {
   Rocket,
   LayoutDashboard,
@@ -53,8 +51,18 @@ const mainNav = [
 
 export default function VuelaCRMReplica() {
   const [page, setPage] = useState("dashboard");
+  const [phoneOpen, setPhoneOpen] = useState(false);
+  const [incomingCall, setIncomingCall] = useState(false);
   const activeItem = mainNav.find(([key]) => key === page);
   const title = activeItem?.[1] || "Dashboard";
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIncomingCall(true);
+      setPhoneOpen(true);
+    }, 60000);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#f3f7fb] text-[#101828]">
@@ -97,7 +105,7 @@ export default function VuelaCRMReplica() {
         </aside>
 
         <main className="min-w-0 flex-1">
-          <TopBar title={title} />
+          <TopBar title={title} onPhoneClick={() => setPhoneOpen(true)} />
           <div className="lg:hidden border-b border-slate-200 bg-white p-2">
             <div className="flex gap-2 overflow-x-auto">
               {mainNav.map(([key,label]) => <button key={key} onClick={()=>setPage(key)} className={`shrink-0 rounded-full px-3 py-2 text-xs font-semibold ${page===key?'bg-[#007e6f] text-white':'bg-slate-100 text-slate-600'}`}>{label}</button>)}
@@ -112,21 +120,29 @@ export default function VuelaCRMReplica() {
           {page === "reputation" && <Reputation />}
           {page === "automations" && <Automations />}
           {page === "contacts" && <Contacts />}
-          {page === "launchpad" && <Marketing />}
+          {page === "launchpad" && <Marketing />}          <PhoneDialer
+            open={phoneOpen}
+            incoming={incomingCall}
+            onClose={() => {
+              setPhoneOpen(false);
+              setIncomingCall(false);
+            }}
+            onAnswer={() => setIncomingCall(false)}
+          />
         </main>
       </div>
     </div>
   );
 }
 
-function TopBar({ title }) {
+function TopBar({ title, onPhoneClick }) {
   return (
     <header className="flex h-[70px] items-center justify-between border-b border-[#dfe5ee] bg-white px-5">
       <div className="flex items-center gap-6">
         <h1 className="text-xl font-semibold">{title}</h1>
       </div>
       <div className="flex items-center gap-2">
-        <IconCircle color="#008a63"><Phone className="h-4 w-4" /></IconCircle>
+        <button onClick={onPhoneClick} className="rounded-full transition hover:scale-105"><IconCircle color="#008a63"><Phone className="h-4 w-4" /></IconCircle></button>
         <button className="rounded-full bg-[#5c2dbf] px-4 py-2 text-sm font-bold text-white">Ask AI</button>
         <IconCircle color="#0d9488"><Bell className="h-4 w-4" /></IconCircle>
         <IconCircle color="#f97316"><Bell className="h-4 w-4" /></IconCircle>
@@ -191,16 +207,57 @@ function Marketing() {
 }
 
 function Conversations() {
-  return <div><PageTabs items={["Conversations","Manual Actions","Snippets","Trigger Links","Settings"]} /><div className="grid h-[calc(100vh-122px)] min-h-[730px] grid-cols-[360px_1fr_320px] bg-[#f3f7fb]"><TeamInbox /><ChatWindow /><ContactDetails /></div></div>;
+  const contacts = [
+    { name: "Sarah Johnson", phone: "+1 (503) 555-0198", preview: "Hey! I need a quote for my roof." },
+    { name: "Mike Thompson", phone: "+1 (503) 555-0134", preview: "Can we schedule an appointment?" },
+    { name: "Emily Davis", phone: "+1 (541) 555-0188", preview: "Thanks! That works for me." },
+    { name: "Jason Brown", phone: "+1 (971) 555-0160", preview: "Missed call" },
+    { name: "Lisa Martinez", phone: "+1 (458) 555-0177", preview: "Can you send over details?" },
+  ];
+  const [activeContact, setActiveContact] = useState(contacts[0]);
+
+  return <div><PageTabs items={["Conversations","Manual Actions","Snippets","Trigger Links","Settings"]} /><div className="grid h-[calc(100vh-122px)] min-h-[730px] grid-cols-[360px_1fr_320px] bg-[#f3f7fb]"><TeamInbox contacts={contacts} activeContact={activeContact} onSelect={setActiveContact} /><ChatWindow contact={activeContact} /><ContactDetails contact={activeContact} /></div></div>;
 }
 
-function TeamInbox({ small=false }) {
-  const list=["Sarah Johnson","Mike Thompson","Emily Davis","Jason Brown","Lisa Martinez"];
-  return <div className={`bg-white ${small?'rounded-lg border border-slate-200':'border-r border-slate-200'}`}><div className="border-b border-slate-200 p-4"><div className="flex items-center justify-between"><h3 className="font-bold">Team Inbox</h3><MoreVertical className="h-4 w-4" /></div><div className="mt-4 grid grid-cols-4 text-center text-xs text-slate-500"><span className="font-bold text-[#007e6f]">Unread</span><span>All</span><span>Recents</span><span>Starred</span></div></div><div className="p-3"><div className="mb-3 rounded-md border border-slate-200 px-3 py-2 text-sm text-slate-400">Search conversations</div>{list.map((n,i)=><div key={n} className={`mb-2 rounded-lg p-3 ${i===0?'border border-[#007e6f] bg-[#f0faf8]':'border border-transparent'}`}><div className="flex justify-between"><p className="font-semibold text-sm">{n}</p><span className="text-xs text-slate-500">{i===0?'2:34 PM':'1:47 PM'}</span></div><p className="mt-1 text-xs text-slate-500">{i===0?'Hey! I need a quote for my roof.':'Can we schedule an appointment?'}</p></div>)}</div></div>;
+function TeamInbox({ small=false, contacts, activeContact, onSelect }) {
+  const list = contacts || [
+    { name: "Sarah Johnson", preview: "Hey! I need a quote for my roof." },
+    { name: "Mike Thompson", preview: "Can we schedule an appointment?" },
+    { name: "Emily Davis", preview: "Thanks! That works for me." },
+    { name: "Jason Brown", preview: "Missed call" },
+    { name: "Lisa Martinez", preview: "Can you send over details?" },
+  ];
+  return <div className={`bg-white ${small?'rounded-lg border border-slate-200':'border-r border-slate-200'}`}><div className="border-b border-slate-200 p-4"><div className="flex items-center justify-between"><h3 className="font-bold">Team Inbox</h3><MoreVertical className="h-4 w-4" /></div><div className="mt-4 grid grid-cols-4 text-center text-xs text-slate-500"><span className="font-bold text-[#007e6f]">Unread</span><span>All</span><span>Recents</span><span>Starred</span></div></div><div className="p-3"><div className="mb-3 rounded-md border border-slate-200 px-3 py-2 text-sm text-slate-400">Search conversations</div>{list.map((contact,i)=><button key={contact.name} onClick={() => onSelect && onSelect(contact)} className={`mb-2 block w-full rounded-lg p-3 text-left transition hover:bg-[#f0faf8] ${(activeContact?.name===contact.name || (!activeContact && i===0))?'border border-[#007e6f] bg-[#f0faf8]':'border border-transparent'}`}><div className="flex justify-between"><p className="font-semibold text-sm">{contact.name}</p><span className="text-xs text-slate-500">{i===0?'2:34 PM':'1:47 PM'}</span></div><p className="mt-1 text-xs text-slate-500">{contact.preview}</p></button>)}</div></div>;
 }
 
-function ChatWindow(){return <div className="flex flex-col bg-white"><div className="flex items-center justify-between border-b border-slate-200 p-4"><div><p className="font-bold">Sarah Johnson</p><p className="text-sm text-slate-500">+1 (503) 555-0198</p></div><div className="flex gap-4"><Phone/><Mail/><Star/><MoreVertical/></div></div><div className="flex-1 bg-[#f7f9fc] p-8"><div className="mx-auto max-w-[720px] space-y-5"><div className="text-center"><span className="rounded-full bg-white px-4 py-2 text-sm shadow-sm">Today</span></div><Bubble text="Hey! I need a quote for my roof." left/><Bubble text="Hi Sarah! Thanks for reaching out. I’d be happy to help. Can you tell me a bit more about your project?"/><Bubble text="Sure, it’s a full roof replacement." left/><Bubble text="Perfect. I’ll prepare a quote and send it over shortly."/></div></div><div className="border-t bg-white p-4"><div className="rounded-lg border border-slate-300 p-3 text-slate-400">Type a message... <button className="float-right rounded-md bg-[#007e6f] px-4 py-1 text-white">Send</button></div></div></div>}
-function ContactDetails(){return <div className="bg-white p-4"><h3 className="font-bold">Contact Details</h3><div className="mt-5 rounded-lg border border-slate-200 p-4"><p className="font-bold">Sarah Johnson</p><p className="text-sm text-slate-500">+1 (503) 555-0198</p><p className="mt-2 text-sm text-slate-500">sarah@example.com</p></div><div className="mt-4 space-y-3">{["Create Opportunity","Create Task","Add Note","Schedule Appointment"].map(x=><div key={x} className="rounded-lg border border-slate-200 p-3 text-sm font-semibold">{x}</div>)}</div></div>}
+function ChatWindow({ contact }){
+  const [messages, setMessages] = useState([
+    { from: "lead", text: contact?.preview || "Hey! I need a quote for my roof." },
+    { from: "team", text: "Hi! Thanks for reaching out. I’d be happy to help. Can you tell me a bit more about your project?" },
+    { from: "lead", text: "Sure, I’m looking for pricing and availability." },
+  ]);
+  const [reply, setReply] = useState("");
+
+  useEffect(() => {
+    setMessages([
+      { from: "lead", text: contact?.preview || "Hey! I need a quote for my roof." },
+      { from: "team", text: "Hi! Thanks for reaching out. I’d be happy to help. Can you tell me a bit more about your project?" },
+      { from: "lead", text: "Sure, I’m looking for pricing and availability." },
+    ]);
+  }, [contact?.name]);
+
+  const sendReply = () => {
+    if (!reply.trim()) return;
+    setMessages([...messages, { from: "team", text: reply }]);
+    setReply("");
+    setTimeout(() => {
+      setMessages((prev) => [...prev, { from: "lead", text: "Perfect, thank you. That helps a lot." }]);
+    }, 1400);
+  };
+
+  return <div className="flex flex-col bg-white"><div className="flex items-center justify-between border-b border-slate-200 p-4"><div><p className="font-bold">{contact?.name || "Sarah Johnson"}</p><p className="text-sm text-slate-500">{contact?.phone || "+1 (503) 555-0198"}</p></div><div className="flex gap-4"><Phone/><Mail/><Star/><MoreVertical/></div></div><div className="flex-1 overflow-y-auto bg-[#f7f9fc] p-8"><div className="mx-auto max-w-[720px] space-y-5"><div className="text-center"><span className="rounded-full bg-white px-4 py-2 text-sm shadow-sm">Today</span></div>{messages.map((m,i)=><Bubble key={i} text={m.text} left={m.from==='lead'} />)}</div></div><div className="border-t bg-white p-4"><div className="flex items-center gap-2 rounded-lg border border-slate-300 p-2"><input value={reply} onChange={(e)=>setReply(e.target.value)} onKeyDown={(e)=>{if(e.key==='Enter')sendReply()}} placeholder="Type a message..." className="flex-1 bg-transparent px-2 outline-none" /><button onClick={sendReply} className="rounded-md bg-[#007e6f] px-4 py-2 text-white">Send</button></div></div></div>
+}
+function ContactDetails({ contact }){return <div className="bg-white p-4"><h3 className="font-bold">Contact Details</h3><div className="mt-5 rounded-lg border border-slate-200 p-4"><p className="font-bold">{contact?.name || "Sarah Johnson"}</p><p className="text-sm text-slate-500">{contact?.phone || "+1 (503) 555-0198"}</p><p className="mt-2 text-sm text-slate-500">{(contact?.name || "Sarah Johnson").toLowerCase().replaceAll(" ", ".")}@example.com</p></div><div className="mt-4 space-y-3">{["Create Opportunity","Create Task","Add Note","Schedule Appointment"].map(x=><button key={x} onClick={() => alert(`${x} created in demo mode`)} className="block w-full rounded-lg border border-slate-200 p-3 text-left text-sm font-semibold transition hover:bg-[#f0faf8]">{x}</button>)}</div></div>}
 
 function Opportunities(){const cols=["New Lead","Hot Lead","New Booking","Visit Attended","Job Won"];return <div><PageTabs items={["Opportunities","Pipelines","Bulk Actions"]}/><div className="bg-[#f3f7fb] p-5"><Toolbar title="Marketing Pipeline" button="Add opportunity"/><div className="mt-5 grid gap-3 xl:grid-cols-5">{cols.map((c,i)=><div key={c} className="rounded-lg border bg-white"><div className="border-b p-3"><p className="font-bold">{c}</p><p className="text-sm text-slate-500">{12-i*2} Opportunities · ${(6500+i*2400).toLocaleString()}</p></div><div className="space-y-2 p-3">{["John Miller","Anne Wilson","David Clark"].map((n,j)=><div key={n+j} className="rounded-lg border border-slate-200 bg-white p-3"><div className="flex justify-between"><p className="font-bold text-sm">{j===1&&i>0?'Jessica Taylor':n}</p><p className="font-bold text-sm">${[650,1000,950][j]}</p></div><p className="mt-2 text-xs text-slate-500">Roof Replacement</p><p className="mt-2 text-xs text-slate-400">Apr {29-j}</p></div>)}</div></div>)}</div></div></div>}
 function Calendars(){return <div><PageTabs items={["Calendar View","Appointment List View","Calendar Settings"]}/><div className="grid grid-cols-[1fr_320px] bg-[#f3f7fb]"><div className="p-5"><Toolbar title="May 2026" button="New"/><CalendarGrid /></div><div className="border-l bg-white p-5"><h3 className="font-bold">Manage View</h3><div className="mt-6 rounded-lg bg-slate-50 p-4"><p className="font-bold">View by type</p>{["All","Appointments","Blocked Slots"].map((x,i)=><p key={x} className="mt-3 text-sm">○ {x}</p>)}</div><div className="mt-6"><p className="font-bold">Filters</p><div className="mt-3 rounded-md border p-2 text-sm text-slate-400">Search users, calendars or groups</div></div></div></div></div>}
@@ -225,9 +282,49 @@ function IconCircle({children,color}){return <div style={{backgroundColor:color}
 function Bubble({text,left}){return <div className={`max-w-[58%] rounded-lg p-3 text-sm ${left?'bg-white':'ml-auto bg-[#e8f7f5]'}`}>{text}</div>}
 function FunnelChart(){return <div className="mt-7 grid grid-cols-[1fr_220px] items-center gap-6"><div className="mx-auto w-72"><div className="h-14 bg-blue-600 clip"/><div className="mx-auto h-14 w-[85%] bg-blue-400"/><div className="mx-auto h-14 w-[68%] bg-red-500"/><div className="mx-auto h-14 w-[50%] bg-orange-400"/><div className="mx-auto h-14 w-[35%] bg-green-400"/></div><div className="space-y-4 text-sm">{["New Lead 12","Hot Lead 8","New Booking 6","Visit Attended 4","Job Won 2","Total 32"].map(x=><p key={x} className="flex justify-between border-b pb-2"><span>{x.split(' ').slice(0,-1).join(' ')}</span><b>{x.split(' ').at(-1)}</b></p>)}</div></div>}
 function Donut(){return <div className="mt-7 flex items-center justify-center gap-12"><div className="grid h-52 w-52 place-items-center rounded-full" style={{background:`conic-gradient(#2563eb 0 38%, #2fb6b1 38% 63%, #ef4444 63% 82%, #f59e0b 82% 94%, #6cc96b 94% 100%)`}}><div className="grid h-28 w-28 place-items-center rounded-full bg-white"><div className="text-center"><p className="text-3xl font-bold">32</p><p className="text-sm">Total</p></div></div></div><div className="space-y-4 text-sm">{["New Lead 37.5%","Hot Lead 25.0%","New Booking 18.8%","Visit Attended 12.5%","Job Won 6.2%"].map(x=><p key={x} className="flex gap-6"><span>{x}</span></p>)}</div></div>}
+function PhoneDialer({ open, incoming, onClose, onAnswer }) {
+  const [number, setNumber] = useState("5035550198");
+  if (!open) return null;
+  const keys = ["1","2","3","4","5","6","7","8","9","*","0","#"];
+  return (
+    <div className="fixed bottom-6 right-6 z-50 w-[340px] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
+      <div className={`${incoming ? "bg-[#bd0101]" : "bg-[#007e6f]"} p-4 text-white`}>
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-xs uppercase tracking-wide opacity-80">{incoming ? "Incoming Call" : "Phone"}</p>
+            <p className="text-lg font-bold">{incoming ? "Maria Lopez" : "VUELA Dialer"}</p>
+          </div>
+          <button onClick={onClose} className="rounded-full bg-white/20 px-3 py-1 text-sm">Close</button>
+        </div>
+      </div>
+      <div className="p-5">
+        <div className="mb-4 rounded-xl border border-slate-200 bg-slate-50 p-4 text-center text-2xl font-semibold tracking-wide">
+          {number || "Enter number"}
+        </div>
+        <div className="grid grid-cols-3 gap-3">
+          {keys.map((key) => (
+            <button key={key} onClick={() => setNumber(number + key)} className="rounded-xl border border-slate-200 bg-white p-4 text-xl font-bold shadow-sm transition hover:bg-[#f0faf8]">
+              {key}
+            </button>
+          ))}
+        </div>
+        <div className="mt-5 grid grid-cols-2 gap-3">
+          {incoming ? (
+            <>
+              <button onClick={onClose} className="rounded-xl bg-red-500 px-4 py-3 font-bold text-white">Decline</button>
+              <button onClick={onAnswer} className="rounded-xl bg-[#007e6f] px-4 py-3 font-bold text-white">Answer</button>
+            </>
+          ) : (
+            <>
+              <button onClick={() => setNumber("")} className="rounded-xl border px-4 py-3 font-bold">Clear</button>
+              <button onClick={() => alert(`Calling ${number} in demo mode`)} className="rounded-xl bg-[#007e6f] px-4 py-3 font-bold text-white">Call</button>
+            </>
+          )}
+        </div>
+        <p className="mt-4 text-center text-xs text-slate-500">Demo mode only. No real calls are placed.</p>
+      </div>
+    </div>
+  );
+}
+
 function VuelaLogo({small=false}){return <div className={`relative ${small?'h-8 w-12':'h-12 w-20'}`}><div className="absolute left-0 top-2 h-7 w-10 rounded-l-full bg-[#007e6f]" style={{clipPath:'polygon(0 0,100% 30%,75% 70%,20% 100%)'}}/><div className="absolute right-0 top-2 h-7 w-10 rounded-r-full bg-[#ff0000]" style={{clipPath:'polygon(0 30%,100% 0,80% 100%,25% 70%)'}}/><div className="absolute left-1/2 top-3 h-7 w-7 -translate-x-1/2 rounded-full border-4 border-white bg-white"/></div>}
-ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <VuelaCRMReplica />
-  </React.StrictMode>
-);
