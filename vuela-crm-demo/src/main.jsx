@@ -330,3 +330,8 @@ function PhoneDialer({ open, incoming, onClose, onAnswer }) {
 }
 
 function VuelaLogo({small=false}){return <div className={`relative ${small?'h-8 w-12':'h-12 w-20'}`}><div className="absolute left-0 top-2 h-7 w-10 rounded-l-full bg-[#007e6f]" style={{clipPath:'polygon(0 0,100% 30%,75% 70%,20% 100%)'}}/><div className="absolute right-0 top-2 h-7 w-10 rounded-r-full bg-[#ff0000]" style={{clipPath:'polygon(0 30%,100% 0,80% 100%,25% 70%)'}}/><div className="absolute left-1/2 top-3 h-7 w-7 -translate-x-1/2 rounded-full border-4 border-white bg-white"/></div>}
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <VuelaCRMReplica />
+  </React.StrictMode>
+);
