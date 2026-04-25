@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
 import {
   Rocket,
   LayoutDashboard,
@@ -224,3 +226,8 @@ function Bubble({text,left}){return <div className={`max-w-[58%] rounded-lg p-3 
 function FunnelChart(){return <div className="mt-7 grid grid-cols-[1fr_220px] items-center gap-6"><div className="mx-auto w-72"><div className="h-14 bg-blue-600 clip"/><div className="mx-auto h-14 w-[85%] bg-blue-400"/><div className="mx-auto h-14 w-[68%] bg-red-500"/><div className="mx-auto h-14 w-[50%] bg-orange-400"/><div className="mx-auto h-14 w-[35%] bg-green-400"/></div><div className="space-y-4 text-sm">{["New Lead 12","Hot Lead 8","New Booking 6","Visit Attended 4","Job Won 2","Total 32"].map(x=><p key={x} className="flex justify-between border-b pb-2"><span>{x.split(' ').slice(0,-1).join(' ')}</span><b>{x.split(' ').at(-1)}</b></p>)}</div></div>}
 function Donut(){return <div className="mt-7 flex items-center justify-center gap-12"><div className="grid h-52 w-52 place-items-center rounded-full" style={{background:`conic-gradient(#2563eb 0 38%, #2fb6b1 38% 63%, #ef4444 63% 82%, #f59e0b 82% 94%, #6cc96b 94% 100%)`}}><div className="grid h-28 w-28 place-items-center rounded-full bg-white"><div className="text-center"><p className="text-3xl font-bold">32</p><p className="text-sm">Total</p></div></div></div><div className="space-y-4 text-sm">{["New Lead 37.5%","Hot Lead 25.0%","New Booking 18.8%","Visit Attended 12.5%","Job Won 6.2%"].map(x=><p key={x} className="flex gap-6"><span>{x}</span></p>)}</div></div>}
 function VuelaLogo({small=false}){return <div className={`relative ${small?'h-8 w-12':'h-12 w-20'}`}><div className="absolute left-0 top-2 h-7 w-10 rounded-l-full bg-[#007e6f]" style={{clipPath:'polygon(0 0,100% 30%,75% 70%,20% 100%)'}}/><div className="absolute right-0 top-2 h-7 w-10 rounded-r-full bg-[#ff0000]" style={{clipPath:'polygon(0 30%,100% 0,80% 100%,25% 70%)'}}/><div className="absolute left-1/2 top-3 h-7 w-7 -translate-x-1/2 rounded-full border-4 border-white bg-white"/></div>}
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <VuelaCRMReplica />
+  </React.StrictMode>
+);
