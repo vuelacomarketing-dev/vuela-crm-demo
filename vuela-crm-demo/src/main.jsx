@@ -1,118 +1,226 @@
-import React, { useMemo, useState } from "react";
-import { createRoot } from "react-dom/client";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState } from "react";
 import {
-  LayoutDashboard, MessageSquare, Users, KanbanSquare, CalendarDays, CreditCard,
-  Globe2, Star, Workflow, Search, Bell, Plus, MoreHorizontal, Send, Phone, Mail,
-  Clock, CheckCircle2, TrendingUp, DollarSign, Filter, ChevronDown, Zap
+  Rocket,
+  LayoutDashboard,
+  MessageCircle,
+  CalendarDays,
+  Users,
+  KanbanSquare,
+  CreditCard,
+  Globe,
+  Star,
+  Workflow,
+  Search,
+  Zap,
+  Phone,
+  Bell,
+  HelpCircle,
+  Plus,
+  Settings,
+  MoreVertical,
+  Filter,
+  Upload,
+  ChevronDown,
+  Heart,
+  MessageSquare,
+  Share2,
+  Send,
+  Mail,
+  Clock,
+  FileText,
+  Folder,
+  Wand2,
 } from "lucide-react";
-import "./index.css";
 
-const menu = [
-  { key: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { key: "conversations", label: "Conversations", icon: MessageSquare },
-  { key: "contacts", label: "Contacts", icon: Users },
-  { key: "opportunities", label: "Opportunities", icon: KanbanSquare },
-  { key: "calendars", label: "Calendars", icon: CalendarDays },
-  { key: "payments", label: "Payments", icon: CreditCard },
-  { key: "sites", label: "Sites", icon: Globe2 },
-  { key: "reputation", label: "Reputation", icon: Star },
-  { key: "automations", label: "Automations", icon: Workflow },
+const teal = "#007e6f";
+const red = "#bd0101";
+const blue = "#2563eb";
+
+const mainNav = [
+  ["launchpad", "Launchpad", Rocket],
+  ["dashboard", "Dashboard", LayoutDashboard],
+  ["conversations", "Conversations", MessageCircle],
+  ["calendars", "Calendars", CalendarDays],
+  ["contacts", "Contacts", Users],
+  ["opportunities", "Opportunities", KanbanSquare],
+  ["payments", "Payments", CreditCard],
+  ["sites", "Sites", Globe],
+  ["reputation", "Reputation", Star],
+  ["automations", "Automation", Workflow],
 ];
 
-const contacts = [
-  { name: "Maria Lopez", phone: "(541) 555-0184", email: "maria@example.com", tag: "New Website Lead", value: "$1,250" },
-  { name: "James Carter", phone: "(503) 555-0138", email: "james@example.com", tag: "Quote Requested", value: "$860" },
-  { name: "Avery Mitchell", phone: "(971) 555-0199", email: "avery@example.com", tag: "Booked", value: "$2,400" },
-  { name: "Sofia Rivera", phone: "(458) 555-0172", email: "sofia@example.com", tag: "Follow Up", value: "$675" },
-];
-
-const convos = [
-  { name: "Maria Lopez", message: "Hi, I need help getting a quote this week.", time: "2m", active: true },
-  { name: "James Carter", message: "Can someone call me today?", time: "18m" },
-  { name: "Sofia Rivera", message: "Thursday afternoon works for me.", time: "1h" },
-  { name: "Avery Mitchell", message: "Thank you, I just booked online.", time: "3h" },
-];
-
-const pipeline = [
-  { title: "New Leads", amount: "$4,850", items: ["Maria Lopez", "Daniel Nguyen", "Northwest Dental"] },
-  { title: "Contacted", amount: "$3,120", items: ["James Carter", "Pine Street Auto"] },
-  { title: "Quoted", amount: "$6,430", items: ["Avery Mitchell", "Riverbend Clinic", "Oak Fuel Co"] },
-  { title: "Booked", amount: "$7,900", items: ["Sofia Rivera", "Summit Builders"] },
-];
-
-const payments = [
-  { invoice: "INV-1048", customer: "Summit Builders", status: "Paid", amount: "$1,450" },
-  { invoice: "INV-1049", customer: "Maria Lopez", status: "Draft", amount: "$625" },
-  { invoice: "INV-1050", customer: "Riverbend Clinic", status: "Due", amount: "$2,100" },
-  { invoice: "INV-1051", customer: "Pine Street Auto", status: "Paid", amount: "$880" },
-];
-
-const reviews = [
-  { name: "Avery Mitchell", rating: 5, text: "Fast response and very easy to schedule." },
-  { name: "Sofia Rivera", rating: 5, text: "The follow up was clear and professional." },
-  { name: "James Carter", rating: 4, text: "Helpful team and simple process." },
-];
-
-function App() {
-  const [active, setActive] = useState("dashboard");
-  const page = useMemo(() => menu.find((m) => m.key === active), [active]);
-  const PageIcon = page?.icon || LayoutDashboard;
+export default function VuelaCRMReplica() {
+  const [page, setPage] = useState("dashboard");
+  const activeItem = mainNav.find(([key]) => key === page);
+  const title = activeItem?.[1] || "Dashboard";
 
   return (
-    <div className="min-h-screen bg-[#f6f8fb] text-slate-900">
-      <div className="mx-auto flex min-h-screen max-w-[1500px] overflow-hidden bg-white shadow-2xl">
-        <aside className="hidden w-[248px] shrink-0 border-r border-slate-200 bg-white lg:block">
-          <div className="flex h-16 items-center gap-3 border-b border-slate-100 px-5">
-            <VuelaLogo />
-            <div><p className="text-sm font-bold tracking-wide">VUELA CO</p><p className="text-[11px] text-slate-500">CRM Demo</p></div>
-          </div>
-          <div className="p-3">
-            <div className="mb-4 rounded-2xl border border-slate-200 bg-slate-50 p-3">
-              <p className="text-xs font-semibold text-slate-500">Demo Account</p><p className="mt-1 text-sm font-semibold">Sample Business</p>
+    <div className="min-h-screen bg-[#f3f7fb] text-[#101828]">
+      <div className="mx-auto flex min-h-screen max-w-[1600px] bg-white shadow-2xl">
+        <aside className="hidden w-[238px] shrink-0 border-r border-[#dfe5ee] bg-white lg:block">
+          <div className="flex h-[78px] items-center justify-center border-b border-[#eef2f6]">
+            <div className="flex flex-col items-center">
+              <VuelaLogo />
+              <div className="mt-2 text-center text-[11px] font-bold leading-none">VUELA CO</div>
+              <div className="mt-1 text-[10px] text-slate-500">Gresham, Oregon</div>
             </div>
-            <nav className="space-y-1">
-              {menu.map((item) => {
-                const Icon = item.icon; const selected = active === item.key;
-                return <button key={item.key} onClick={() => setActive(item.key)} className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${selected ? "bg-[#007e6f] text-white shadow-sm" : "text-slate-600 hover:bg-slate-100 hover:text-slate-950"}`}><Icon className="h-4 w-4" />{item.label}</button>;
+          </div>
+
+          <div className="p-3">
+            <div className="mb-4 flex items-center gap-2 rounded-md border border-[#d7dde7] bg-white px-2 py-2 text-sm text-slate-500 shadow-sm">
+              <Search className="h-4 w-4" />
+              <span className="flex-1">Search</span>
+              <span className="rounded bg-slate-100 px-1.5 text-xs">⌘K</span>
+              <Zap className="h-4 w-4 text-[#007e6f]" />
+            </div>
+
+            <nav className="space-y-1 text-[14px]">
+              {mainNav.map(([key, label, Icon]) => {
+                const isActive = page === key;
+                return (
+                  <button
+                    key={key}
+                    onClick={() => setPage(key)}
+                    className={`flex w-full items-center gap-3 rounded-md px-3 py-2.5 font-medium transition ${
+                      isActive ? "bg-[#eef5f4] text-[#007e6f]" : "text-slate-600 hover:bg-slate-50"
+                    }`}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {label}
+                  </button>
+                );
               })}
             </nav>
           </div>
         </aside>
+
         <main className="min-w-0 flex-1">
-          <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-slate-200 bg-white/90 px-4 backdrop-blur md:px-6">
-            <div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#007e6f]/10 text-[#007e6f]"><PageIcon className="h-5 w-5" /></div><div><h1 className="text-base font-bold md:text-lg">{page?.label}</h1><p className="hidden text-xs text-slate-500 sm:block">Interactive VUELA CRM sandbox with sample data</p></div></div>
-            <div className="flex items-center gap-2"><div className="hidden items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 md:flex"><Search className="h-4 w-4 text-slate-400" /><span className="text-sm text-slate-400">Search demo</span></div><Button variant="outline"><Bell className="h-4 w-4" /></Button><Button><Plus className="mr-2 h-4 w-4" />Add</Button></div>
-          </header>
-          <div className="border-b border-slate-200 bg-white px-4 py-3 lg:hidden"><div className="flex gap-2 overflow-x-auto pb-1">{menu.map((item) => <button key={item.key} onClick={() => setActive(item.key)} className={`shrink-0 rounded-full px-3 py-2 text-xs font-semibold ${active === item.key ? "bg-[#007e6f] text-white" : "bg-slate-100 text-slate-600"}`}>{item.label}</button>)}</div></div>
-          <AnimatePresence mode="wait"><motion.div key={active} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }} className="p-4 md:p-6">
-            {active === "dashboard" && <Dashboard />}{active === "conversations" && <Conversations />}{active === "contacts" && <Contacts />}{active === "opportunities" && <Opportunities />}{active === "calendars" && <Calendars />}{active === "payments" && <Payments />}{active === "sites" && <Sites />}{active === "reputation" && <Reputation />}{active === "automations" && <Automations />}
-          </motion.div></AnimatePresence>
+          <TopBar title={title} />
+          <div className="lg:hidden border-b border-slate-200 bg-white p-2">
+            <div className="flex gap-2 overflow-x-auto">
+              {mainNav.map(([key,label]) => <button key={key} onClick={()=>setPage(key)} className={`shrink-0 rounded-full px-3 py-2 text-xs font-semibold ${page===key?'bg-[#007e6f] text-white':'bg-slate-100 text-slate-600'}`}>{label}</button>)}
+            </div>
+          </div>
+          {page === "dashboard" && <Dashboard />}
+          {page === "conversations" && <Conversations />}
+          {page === "opportunities" && <Opportunities />}
+          {page === "calendars" && <Calendars />}
+          {page === "payments" && <Payments />}
+          {page === "sites" && <Sites />}
+          {page === "reputation" && <Reputation />}
+          {page === "automations" && <Automations />}
+          {page === "contacts" && <Contacts />}
+          {page === "launchpad" && <Marketing />}
         </main>
       </div>
     </div>
   );
 }
 
-function Dashboard() { return <div className="space-y-5"><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4"><Stat title="New Leads" value="42" change="18% this month" icon={Users} /><Stat title="Booked Jobs" value="19" change="12 scheduled" icon={CalendarDays} /><Stat title="Pipeline Value" value="$22,300" change="Sample revenue" icon={DollarSign} /><Stat title="Response Time" value="1m 14s" change="Auto reply active" icon={Clock} /></div><div className="grid gap-5 xl:grid-cols-[1.25fr_0.75fr]"><Card><SectionHeader title="Lead Activity" action="Last 30 days" /><div className="mt-6 flex h-64 items-end gap-3">{[35,55,42,70,50,86,62,95,74,88,68,100].map((h,i)=><div key={i} className="flex-1 rounded-t-xl bg-[#007e6f]/80" style={{height:`${h}%`}} />)}</div></Card><Card><SectionHeader title="Today" action="Live demo" /><div className="mt-5 space-y-3"><Activity icon={MessageSquare} text="Auto reply sent to Maria Lopez" /><Activity icon={Phone} text="Missed call text back triggered" /><Activity icon={CalendarDays} text="Avery booked an appointment" /><Activity icon={Star} text="Review request sent" /></div></Card></div></div>; }
-function Conversations() { return <div className="grid min-h-[680px] gap-4 xl:grid-cols-[300px_1fr_320px]"><Card flush><div className="border-b p-4"><SectionHeader title="Inbox" action="4 open" /></div>{convos.map((c)=><div key={c.name} className={`border-b p-4 ${c.active ? "bg-[#007e6f]/5" : "bg-white"}`}><div className="flex justify-between"><p className="font-semibold">{c.name}</p><p className="text-xs text-slate-400">{c.time}</p></div><p className="mt-1 line-clamp-1 text-sm text-slate-500">{c.message}</p></div>)}</Card><Card flush><div className="flex h-full flex-col"><div className="border-b p-4"><p className="font-bold">Maria Lopez</p><p className="text-xs text-slate-500">Website Lead · SMS Conversation</p></div><div className="flex-1 space-y-4 bg-slate-50 p-5"><Bubble left text="Hi, I need help getting a quote this week." /><Bubble text="Thanks for reaching out. We received your request and can help you get scheduled." /><Bubble left text="Great, can someone call me today?" /><Bubble text="Absolutely. A team member can call shortly. What time works best?" /></div><div className="border-t bg-white p-4"><div className="flex items-center gap-2 rounded-2xl border border-slate-200 p-2"><span className="flex-1 px-2 text-sm text-slate-400">Type a reply...</span><Button><Send className="h-4 w-4" /></Button></div></div></div></Card><Card><SectionHeader title="Contact Details" action="Lead" /><div className="mt-5 space-y-4"><Detail label="Phone" value="(541) 555-0184" /><Detail label="Email" value="maria@example.com" /><Detail label="Source" value="Website Form" /><Detail label="Pipeline" value="New Leads" /></div><Button red className="mt-6 w-full">Create Opportunity</Button></Card></div>; }
-function Contacts() { return <TablePage title="Contacts" subtitle="Manage leads, customers, tags, and contact history." rows={contacts} />; }
-function Opportunities() { return <div className="space-y-4"><div className="flex flex-col justify-between gap-3 md:flex-row md:items-center"><div><h2 className="text-xl font-bold">Sales Pipeline</h2><p className="text-sm text-slate-500">Drag style sample board with fake opportunity data.</p></div><Button variant="outline"><Filter className="mr-2 h-4 w-4" /> Pipeline <ChevronDown className="ml-2 h-4 w-4" /></Button></div><div className="grid gap-4 xl:grid-cols-4">{pipeline.map((col)=><Card key={col.title} className="bg-slate-50"><div className="mb-4 flex items-center justify-between"><div><p className="font-bold">{col.title}</p><p className="text-xs text-slate-500">{col.amount}</p></div><MoreHorizontal className="h-4 w-4 text-slate-400" /></div><div className="space-y-3">{col.items.map((name,i)=><div key={name} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"><p className="font-semibold">{name}</p><p className="mt-1 text-xs text-slate-500">Follow up task · {i+1} day ago</p><div className="mt-3 h-1.5 rounded-full bg-[#007e6f]/20"><div className="h-full rounded-full bg-[#007e6f]" style={{width:`${45+i*18}%`}} /></div></div>)}</div></Card>)}</div></div>; }
-function Calendars() { const events = ["Discovery Call", "Quote Review", "Client Onboarding", "Follow Up Call", "Website Strategy", "CRM Training"]; return <Card><SectionHeader title="Calendar" action="April 2026" /><div className="mt-5 grid grid-cols-7 gap-2 text-center text-xs font-semibold text-slate-500">{["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(d=><div key={d}>{d}</div>)}</div><div className="mt-3 grid grid-cols-7 gap-2">{Array.from({length:35}).map((_,i)=><div key={i} className="min-h-24 rounded-2xl border border-slate-200 bg-white p-2"><p className="text-xs font-semibold text-slate-400">{i+1}</p>{[3,6,10,15,18,23,28].includes(i) && <div className="mt-2 rounded-xl bg-[#007e6f]/10 p-2 text-left text-[11px] font-semibold text-[#007e6f]">{events[i%events.length]}</div>}</div>)}</div></Card>; }
-function Payments() { return <div className="space-y-5"><div className="grid gap-4 md:grid-cols-3"><Stat title="Paid" value="$12,480" change="This month" icon={CheckCircle2} /><Stat title="Outstanding" value="$3,250" change="3 invoices" icon={Clock} /><Stat title="Drafts" value="5" change="Ready to send" icon={CreditCard} /></div><TablePage title="Invoices" subtitle="Sample invoice and payment tracking." rows={payments.map(p=>({name:p.invoice, phone:p.customer, email:p.status, tag:"Invoice", value:p.amount}))} /></div>; }
-function Sites() { return <CardsGrid title="Sites and Funnels" subtitle="Landing pages, forms, funnels, and conversion paths." items={["Website Home", "CRM Demo Page", "Lead Capture Funnel", "Thank You Page", "Booking Form", "Quote Request Form"]} />; }
-function Reputation() { return <div className="space-y-5"><div className="grid gap-4 md:grid-cols-3"><Stat title="Average Rating" value="4.9" change="Sample reviews" icon={Star} /><Stat title="Reviews Sent" value="84" change="Automated requests" icon={Send} /><Stat title="SEO Signals" value="Growing" change="Local trust" icon={TrendingUp} /></div><div className="grid gap-4 md:grid-cols-3">{reviews.map(r=><Card key={r.name}><div className="mb-3 text-[#bd0101]">{"★".repeat(r.rating)}</div><p className="text-sm text-slate-600">“{r.text}”</p><p className="mt-4 font-semibold">{r.name}</p></Card>)}</div></div>; }
-function Automations() { return <CardsGrid title="Automations" subtitle="Sample workflows that keep leads moving." items={["Instant Lead Reply", "Missed Call Text Back", "No Response Follow Up", "Appointment Reminder", "Review Request", "New Client Onboarding"]} automation />; }
-function TablePage({ title, subtitle, rows }) { return <Card flush><div className="flex items-center justify-between border-b p-5"><div><h2 className="text-xl font-bold">{title}</h2><p className="text-sm text-slate-500">{subtitle}</p></div><Button><Plus className="mr-2 h-4 w-4" />New</Button></div><div className="overflow-x-auto"><table className="w-full min-w-[760px] text-sm"><thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500"><tr><th className="p-4">Name</th><th className="p-4">Phone / Customer</th><th className="p-4">Email / Status</th><th className="p-4">Tag</th><th className="p-4 text-right">Value</th></tr></thead><tbody>{rows.map((r)=><tr key={r.name} className="border-t"><td className="p-4 font-semibold">{r.name}</td><td className="p-4 text-slate-600">{r.phone}</td><td className="p-4 text-slate-600">{r.email}</td><td className="p-4"><span className="rounded-full bg-[#007e6f]/10 px-3 py-1 text-xs font-semibold text-[#007e6f]">{r.tag}</span></td><td className="p-4 text-right font-semibold">{r.value}</td></tr>)}</tbody></table></div></Card>; }
-function CardsGrid({ title, subtitle, items, automation }) { return <div className="space-y-5"><div><h2 className="text-xl font-bold">{title}</h2><p className="text-sm text-slate-500">{subtitle}</p></div><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">{items.map((item)=><Card key={item}><div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-[#007e6f]/10 text-[#007e6f]">{automation ? <Zap className="h-5 w-5" /> : <Globe2 className="h-5 w-5" />}</div><p className="font-bold">{item}</p><p className="mt-2 text-sm text-slate-500">Demo asset with sample setup and fake data.</p><div className="mt-4 flex items-center justify-between text-xs text-slate-400"><span>Updated today</span><span className="font-semibold text-[#bd0101]">Active</span></div></Card>)}</div></div>; }
+function TopBar({ title }) {
+  return (
+    <header className="flex h-[70px] items-center justify-between border-b border-[#dfe5ee] bg-white px-5">
+      <div className="flex items-center gap-6">
+        <h1 className="text-xl font-semibold">{title}</h1>
+      </div>
+      <div className="flex items-center gap-2">
+        <IconCircle color="#008a63"><Phone className="h-4 w-4" /></IconCircle>
+        <button className="rounded-full bg-[#5c2dbf] px-4 py-2 text-sm font-bold text-white">Ask AI</button>
+        <IconCircle color="#0d9488"><Bell className="h-4 w-4" /></IconCircle>
+        <IconCircle color="#f97316"><Bell className="h-4 w-4" /></IconCircle>
+        <IconCircle color="#2563eb"><HelpCircle className="h-4 w-4" /></IconCircle>
+        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#69427e] text-xs font-bold text-white">MM</div>
+      </div>
+    </header>
+  );
+}
 
-function Card({ children, className = "", flush = false }) { return <div className={`rounded-2xl border border-slate-200 bg-white shadow-sm ${className}`}>{flush ? children : <div className="p-5">{children}</div>}</div>; }
-function Button({ children, className = "", variant, red, ...props }) { const base = "inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold transition"; const style = variant === "outline" ? "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50" : red ? "bg-[#bd0101] text-white hover:bg-[#9f0101]" : "bg-[#007e6f] text-white hover:bg-[#006b5f]"; return <button className={`${base} ${style} ${className}`} {...props}>{children}</button>; }
-function Stat({ title, value, change, icon: Icon }) { return <Card><div className="flex items-start justify-between"><div><p className="text-sm text-slate-500">{title}</p><p className="mt-2 text-2xl font-bold">{value}</p><p className="mt-2 text-xs font-medium text-[#007e6f]">{change}</p></div><div className="rounded-2xl bg-[#007e6f]/10 p-3 text-[#007e6f]"><Icon className="h-5 w-5" /></div></div></Card>; }
-function SectionHeader({ title, action }) { return <div className="flex items-center justify-between"><h2 className="font-bold">{title}</h2><span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-500">{action}</span></div>; }
-function Activity({ icon: Icon, text }) { return <div className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-white p-3"><div className="rounded-xl bg-[#007e6f]/10 p-2 text-[#007e6f]"><Icon className="h-4 w-4" /></div><p className="text-sm text-slate-600">{text}</p></div>; }
-function Detail({ label, value }) { return <div className="rounded-2xl border border-slate-100 bg-slate-50 p-3"><p className="text-xs text-slate-500">{label}</p><p className="mt-1 text-sm font-semibold">{value}</p></div>; }
-function Bubble({ text, left }) { return <div className={`max-w-[78%] rounded-2xl p-3 text-sm shadow-sm ${left ? "bg-white text-slate-700" : "ml-auto bg-[#007e6f] text-white"}`}>{text}</div>; }
-function VuelaLogo() { return <div className="relative flex h-10 w-10 items-center justify-center"><div className="absolute left-0 h-7 w-4 rounded-l-full rounded-tr-lg bg-[#007e6f]" style={{ transform: "skewY(-18deg)" }} /><div className="absolute right-0 h-7 w-4 rounded-r-full rounded-tl-lg bg-[#bd0101]" style={{ transform: "skewY(18deg)" }} /><div className="relative h-4 w-4 rounded-full border-2 border-white bg-slate-900 shadow" /></div>; }
+function PageTabs({ items }) {
+  return <div className="flex h-[52px] items-center gap-7 border-b border-[#dfe5ee] bg-white px-5 text-sm font-semibold text-slate-600">{items.map((item,i)=><div key={item} className={`${i===0?'border-b-2 border-[#007e6f] text-[#007e6f]':''} flex h-full items-center`}>{item}</div>)}</div>;
+}
 
-createRoot(document.getElementById("root")).render(<App />);
+function Dashboard() {
+  return (
+    <div>
+      <PageTabs items={["Overview"]} />
+      <div className="space-y-4 bg-[#f3f7fb] p-5">
+        <div className="flex justify-end gap-3">
+          <ButtonGhost>Last 30 Days <ChevronDown className="h-4 w-4" /></ButtonGhost>
+          <ButtonGhost>Edit Dashboard</ButtonGhost>
+        </div>
+        <div className="grid gap-4 xl:grid-cols-4">
+          <Metric title="Opportunities" value="32" up="12.5%" />
+          <Metric title="Pipeline Value" value="$47,850" up="18.7%" />
+          <Metric title="Conversion Rate" value="18.4%" up="8.3%" />
+          <Metric title="Won Revenue" value="$12,980" up="23.1%" />
+        </div>
+        <div className="grid gap-4 xl:grid-cols-[1fr_1fr_330px]">
+          <Panel title="Funnel" action="Marketing Pipeline"><FunnelChart /></Panel>
+          <Panel title="Stage Distribution" action="Marketing Pipeline"><Donut /></Panel>
+          <TeamInbox small />
+        </div>
+        <div className="grid gap-4 xl:grid-cols-[1.1fr_1fr_1fr]">
+          <MiniMarketing />
+          <MiniCalendar />
+          <MiniInvoices />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Marketing() {
+  return (
+    <div>
+      <PageTabs items={["Social Planner","Emails","Snippets","Countdown Timers","Trigger Links"]} />
+      <div className="grid gap-6 bg-white p-7 xl:grid-cols-[1fr_360px]">
+        <div>
+          <h2 className="max-w-2xl text-4xl font-semibold leading-tight">Grow faster with a smarter social media calendar</h2>
+          <p className="mt-3 text-lg text-slate-600">Plan, schedule, and publish content across all your social platforms.</p>
+          <p className="mt-9 text-slate-600">Select the social accounts you want to connect:</p>
+          <div className="mt-4 flex flex-wrap gap-3">{["Facebook","Instagram","TikTok","Linkedin","YouTube"].map(x=><button key={x} className="rounded-lg border border-slate-300 bg-white px-4 py-3 font-semibold shadow-sm">{x}</button>)}</div>
+          <div className="mt-6 rounded-lg border border-blue-300 bg-blue-50 p-5"><p className="font-semibold">Save time by scheduling posts</p><p className="mt-2 text-slate-600">Keep your social channels active by scheduling posts!</p><p className="mt-3 font-semibold text-blue-600">Schedule Now →</p></div>
+          <div className="mt-8 grid gap-4 md:grid-cols-4">{["Bulk Scheduling with CSV","Evergreen Queue Post","Recurring Post","RSS Feed Automation"].map((x,i)=><SmallCard key={x} title={x} link={i===0?'Upload CSV':i===3?'Create RSS Post':'Create Post'} />)}</div>
+        </div>
+        <div className="mt-10 rounded-xl border border-slate-300 bg-white shadow-sm"><div className="p-4"><div className="flex items-center gap-3"><VuelaLogo small /><div><p className="font-bold">VUELA CO</p><p className="text-xs text-slate-500">Gresham, Oregon</p></div></div></div><div className="h-[300px] bg-gradient-to-br from-sky-100 via-slate-200 to-slate-300 p-4"><div className="mt-28 rounded-xl bg-white/90 p-4 shadow-lg"><p className="font-bold text-[#007e6f]">Scheduled</p><p className="text-sm">May 5, 2026 · 10:00 AM</p></div></div><div className="flex gap-8 p-4 text-blue-600"><Heart /> <MessageSquare /> <Share2 /></div></div>
+      </div>
+    </div>
+  );
+}
+
+function Conversations() {
+  return <div><PageTabs items={["Conversations","Manual Actions","Snippets","Trigger Links","Settings"]} /><div className="grid h-[calc(100vh-122px)] min-h-[730px] grid-cols-[360px_1fr_320px] bg-[#f3f7fb]"><TeamInbox /><ChatWindow /><ContactDetails /></div></div>;
+}
+
+function TeamInbox({ small=false }) {
+  const list=["Sarah Johnson","Mike Thompson","Emily Davis","Jason Brown","Lisa Martinez"];
+  return <div className={`bg-white ${small?'rounded-lg border border-slate-200':'border-r border-slate-200'}`}><div className="border-b border-slate-200 p-4"><div className="flex items-center justify-between"><h3 className="font-bold">Team Inbox</h3><MoreVertical className="h-4 w-4" /></div><div className="mt-4 grid grid-cols-4 text-center text-xs text-slate-500"><span className="font-bold text-[#007e6f]">Unread</span><span>All</span><span>Recents</span><span>Starred</span></div></div><div className="p-3"><div className="mb-3 rounded-md border border-slate-200 px-3 py-2 text-sm text-slate-400">Search conversations</div>{list.map((n,i)=><div key={n} className={`mb-2 rounded-lg p-3 ${i===0?'border border-[#007e6f] bg-[#f0faf8]':'border border-transparent'}`}><div className="flex justify-between"><p className="font-semibold text-sm">{n}</p><span className="text-xs text-slate-500">{i===0?'2:34 PM':'1:47 PM'}</span></div><p className="mt-1 text-xs text-slate-500">{i===0?'Hey! I need a quote for my roof.':'Can we schedule an appointment?'}</p></div>)}</div></div>;
+}
+
+function ChatWindow(){return <div className="flex flex-col bg-white"><div className="flex items-center justify-between border-b border-slate-200 p-4"><div><p className="font-bold">Sarah Johnson</p><p className="text-sm text-slate-500">+1 (503) 555-0198</p></div><div className="flex gap-4"><Phone/><Mail/><Star/><MoreVertical/></div></div><div className="flex-1 bg-[#f7f9fc] p-8"><div className="mx-auto max-w-[720px] space-y-5"><div className="text-center"><span className="rounded-full bg-white px-4 py-2 text-sm shadow-sm">Today</span></div><Bubble text="Hey! I need a quote for my roof." left/><Bubble text="Hi Sarah! Thanks for reaching out. I’d be happy to help. Can you tell me a bit more about your project?"/><Bubble text="Sure, it’s a full roof replacement." left/><Bubble text="Perfect. I’ll prepare a quote and send it over shortly."/></div></div><div className="border-t bg-white p-4"><div className="rounded-lg border border-slate-300 p-3 text-slate-400">Type a message... <button className="float-right rounded-md bg-[#007e6f] px-4 py-1 text-white">Send</button></div></div></div>}
+function ContactDetails(){return <div className="bg-white p-4"><h3 className="font-bold">Contact Details</h3><div className="mt-5 rounded-lg border border-slate-200 p-4"><p className="font-bold">Sarah Johnson</p><p className="text-sm text-slate-500">+1 (503) 555-0198</p><p className="mt-2 text-sm text-slate-500">sarah@example.com</p></div><div className="mt-4 space-y-3">{["Create Opportunity","Create Task","Add Note","Schedule Appointment"].map(x=><div key={x} className="rounded-lg border border-slate-200 p-3 text-sm font-semibold">{x}</div>)}</div></div>}
+
+function Opportunities(){const cols=["New Lead","Hot Lead","New Booking","Visit Attended","Job Won"];return <div><PageTabs items={["Opportunities","Pipelines","Bulk Actions"]}/><div className="bg-[#f3f7fb] p-5"><Toolbar title="Marketing Pipeline" button="Add opportunity"/><div className="mt-5 grid gap-3 xl:grid-cols-5">{cols.map((c,i)=><div key={c} className="rounded-lg border bg-white"><div className="border-b p-3"><p className="font-bold">{c}</p><p className="text-sm text-slate-500">{12-i*2} Opportunities · ${(6500+i*2400).toLocaleString()}</p></div><div className="space-y-2 p-3">{["John Miller","Anne Wilson","David Clark"].map((n,j)=><div key={n+j} className="rounded-lg border border-slate-200 bg-white p-3"><div className="flex justify-between"><p className="font-bold text-sm">{j===1&&i>0?'Jessica Taylor':n}</p><p className="font-bold text-sm">${[650,1000,950][j]}</p></div><p className="mt-2 text-xs text-slate-500">Roof Replacement</p><p className="mt-2 text-xs text-slate-400">Apr {29-j}</p></div>)}</div></div>)}</div></div></div>}
+function Calendars(){return <div><PageTabs items={["Calendar View","Appointment List View","Calendar Settings"]}/><div className="grid grid-cols-[1fr_320px] bg-[#f3f7fb]"><div className="p-5"><Toolbar title="May 2026" button="New"/><CalendarGrid /></div><div className="border-l bg-white p-5"><h3 className="font-bold">Manage View</h3><div className="mt-6 rounded-lg bg-slate-50 p-4"><p className="font-bold">View by type</p>{["All","Appointments","Blocked Slots"].map((x,i)=><p key={x} className="mt-3 text-sm">○ {x}</p>)}</div><div className="mt-6"><p className="font-bold">Filters</p><div className="mt-3 rounded-md border p-2 text-sm text-slate-400">Search users, calendars or groups</div></div></div></div></div>}
+function Payments(){return <div><PageTabs items={["Invoices & Estimates","Documents & Contracts","Orders"]}/><div className="bg-[#f3f7fb] p-5"><Toolbar title="Invoices" button="New"/><div className="grid gap-4 md:grid-cols-4">{["0 In Draft $0.00","5 In Due $8,450.00","3 Received $6,200.00","1 Overdue $1,250.00"].map(x=><div key={x} className="rounded-lg border bg-white p-4 font-bold">{x}</div>)}</div><Table /></div></div>}
+function Sites(){return <div><PageTabs items={["Funnels","Websites","Stores","Analytics","Blogs","Client Portal","Forms"]}/><div className="bg-[#f3f7fb] p-5"><Toolbar title="Funnels" button="New Funnel"/><SimpleList items={["Roofing Lead Capture Funnel","Free Roof Inspection Funnel","Storm Damage Funnel","Estimate Request Funnel","Financing Application Funnel"]}/></div></div>}
+function Reputation(){return <div><PageTabs items={["Overview","My Stats","Competitor Analysis"]}/><div className="grid gap-4 bg-[#f3f7fb] p-5 xl:grid-cols-[280px_1fr_280px]"><Panel title="Your Rating"><div className="text-5xl font-bold">4.8</div><div className="mt-3 text-yellow-400 text-xl">★★★★★</div><p className="mt-3 text-sm text-slate-500">Based on 126 reviews</p></Panel><Panel title="Reviews and ratings trend"><div className="mt-5 h-64 rounded-lg bg-gradient-to-t from-[#007e6f]/10 to-transparent"><div className="pt-32 text-center font-bold text-[#007e6f]">Reviews Trend Chart</div></div></Panel><Panel title="Review Summary"><p className="text-4xl font-bold">128</p><p className="text-sm text-slate-500">Total Reviews</p><p className="mt-8 text-4xl font-bold">12</p><p className="text-sm text-slate-500">New Reviews</p><button className="mt-8 rounded-md bg-[#007e6f] px-4 py-2 text-white">Send Review Request</button></Panel></div></div>}
+function Automations(){return <div><PageTabs items={["Workflows","Overview","Global Workflow Settings"]}/><div className="bg-[#f3f7fb] p-5"><Toolbar title="Workflow List" button="Create Workflow"/><SimpleList items={["New Lead Follow Up","Appointment Reminder","Review Request","Re-Engagement Campaign","Invoice Follow Up"]}/></div></div>}
+function Contacts(){return <div><PageTabs items={["Smart Lists","Contacts","Bulk Actions"]}/><div className="bg-[#f3f7fb] p-5"><Toolbar title="Contacts" button="Add Contact"/><SimpleList items={["Sarah Johnson","Mike Thompson","Emily Davis","Jason Brown","Lisa Martinez"]}/></div></div>}
+
+function Toolbar({title,button}){return <div className="mb-5 flex items-center justify-between"><div><h2 className="text-3xl font-semibold">{title}</h2><p className="text-slate-500">Manage your sample CRM data and activity.</p></div><div className="flex gap-3"><ButtonGhost><Filter className="h-4 w-4"/> Advanced Filters</ButtonGhost><button className="rounded-md bg-[#007e6f] px-4 py-2 font-semibold text-white"><Plus className="mr-1 inline h-4 w-4"/>{button}</button></div></div>}
+function SimpleList({items}){return <div className="rounded-lg border bg-white"><div className="grid grid-cols-[1fr_180px_40px] border-b bg-slate-50 p-3 text-sm font-semibold text-slate-500"><span>Name</span><span>Last Updated</span><span></span></div>{items.map((x,i)=><div key={x} className="grid grid-cols-[1fr_180px_40px] border-b p-4"><span className="font-semibold">{x}</span><span className="text-sm text-slate-500">Apr {29-i}, 2026</span><MoreVertical className="h-4 w-4"/></div>)}</div>}
+function Table(){return <div className="mt-5 rounded-lg border bg-white"><div className="grid grid-cols-6 border-b bg-slate-50 p-3 text-xs font-bold text-slate-500"><span>Invoice Name</span><span>Invoice #</span><span>Customer</span><span>Issue Date</span><span>Amount</span><span>Status</span></div>{["Robert Lee","Sarah Johnson","Brian Anderson","Emily Davis","John Miller"].map((n,i)=><div key={n} className="grid grid-cols-6 border-b p-3 text-sm"><span>INV-100{i+1}</span><span>100{i+1}</span><span>{n}</span><span>Apr {28-i}, 2026</span><span>${[2800,1950,2400,1250,1800][i]}</span><span className="font-bold text-[#007e6f]">{i===3?'Overdue':'Received'}</span></div>)}</div>}
+function MiniMarketing(){return <div className="rounded-lg border bg-white p-4"><h3 className="font-bold">Marketing</h3><div className="mt-4 grid grid-cols-2 gap-3">{["Bulk Scheduling","Evergreen Queue","Recurring Post","RSS Feed"].map(x=><SmallCard key={x} title={x} link="Create" />)}</div></div>}
+function MiniCalendar(){return <div className="rounded-lg border bg-white p-4"><h3 className="font-bold">Calendar View</h3><CalendarGrid mini /></div>}
+function MiniInvoices(){return <div className="rounded-lg border bg-white p-4"><h3 className="font-bold">Invoices & Estimates</h3><Table /></div>}
+function CalendarGrid({mini=false}){const cells=Array.from({length:35});return <div className={`mt-4 grid grid-cols-7 ${mini?'text-[10px]':'text-xs'}`}>{cells.map((_,i)=><div key={i} className={`${mini?'min-h-12':'min-h-24'} border border-slate-200 bg-white p-1`}>{i+1}{[4,8,12,18,22].includes(i)&&<div className="mt-1 rounded bg-[#007e6f]/10 p-1 text-[#007e6f]">10:00 AM</div>}</div>)}</div>}
+function Metric({title,value,up}){return <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm"><p className="text-sm font-medium text-slate-600">{title}</p><p className="mt-3 text-3xl font-semibold">{value}</p><p className="mt-3 text-sm font-semibold text-[#007e6f]">▲ {up} vs last 30 days</p></div>}
+function Panel({title,action,children}){return <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm"><div className="flex items-center justify-between"><h3 className="font-bold">{title}</h3>{action&&<button className="rounded-md border px-3 py-2 text-sm text-slate-600">{action} <ChevronDown className="inline h-3 w-3"/></button>}</div>{children}</div>}
+function SmallCard({title,link}){return <div className="rounded-lg border border-slate-200 bg-white p-4"><p className="min-h-10 font-bold">{title}</p><p className="mt-5 text-sm font-semibold text-blue-600">{link}</p></div>}
+function ButtonGhost({children}){return <button className="flex items-center gap-2 rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm">{children}</button>}
+function IconCircle({children,color}){return <div style={{backgroundColor:color}} className="flex h-9 w-9 items-center justify-center rounded-full text-white">{children}</div>}
+function Bubble({text,left}){return <div className={`max-w-[58%] rounded-lg p-3 text-sm ${left?'bg-white':'ml-auto bg-[#e8f7f5]'}`}>{text}</div>}
+function FunnelChart(){return <div className="mt-7 grid grid-cols-[1fr_220px] items-center gap-6"><div className="mx-auto w-72"><div className="h-14 bg-blue-600 clip"/><div className="mx-auto h-14 w-[85%] bg-blue-400"/><div className="mx-auto h-14 w-[68%] bg-red-500"/><div className="mx-auto h-14 w-[50%] bg-orange-400"/><div className="mx-auto h-14 w-[35%] bg-green-400"/></div><div className="space-y-4 text-sm">{["New Lead 12","Hot Lead 8","New Booking 6","Visit Attended 4","Job Won 2","Total 32"].map(x=><p key={x} className="flex justify-between border-b pb-2"><span>{x.split(' ').slice(0,-1).join(' ')}</span><b>{x.split(' ').at(-1)}</b></p>)}</div></div>}
+function Donut(){return <div className="mt-7 flex items-center justify-center gap-12"><div className="grid h-52 w-52 place-items-center rounded-full" style={{background:`conic-gradient(#2563eb 0 38%, #2fb6b1 38% 63%, #ef4444 63% 82%, #f59e0b 82% 94%, #6cc96b 94% 100%)`}}><div className="grid h-28 w-28 place-items-center rounded-full bg-white"><div className="text-center"><p className="text-3xl font-bold">32</p><p className="text-sm">Total</p></div></div></div><div className="space-y-4 text-sm">{["New Lead 37.5%","Hot Lead 25.0%","New Booking 18.8%","Visit Attended 12.5%","Job Won 6.2%"].map(x=><p key={x} className="flex gap-6"><span>{x}</span></p>)}</div></div>}
+function VuelaLogo({small=false}){return <div className={`relative ${small?'h-8 w-12':'h-12 w-20'}`}><div className="absolute left-0 top-2 h-7 w-10 rounded-l-full bg-[#007e6f]" style={{clipPath:'polygon(0 0,100% 30%,75% 70%,20% 100%)'}}/><div className="absolute right-0 top-2 h-7 w-10 rounded-r-full bg-[#ff0000]" style={{clipPath:'polygon(0 30%,100% 0,80% 100%,25% 70%)'}}/><div className="absolute left-1/2 top-3 h-7 w-7 -translate-x-1/2 rounded-full border-4 border-white bg-white"/></div>}
